@@ -44,7 +44,7 @@ namespace MOJA_ZGRADA.Data
         [Required]
         public string Text { get; set; }
 
-        public string FIle_URL { get; set; }
+        public string File_URL { get; set; }
 
     }
 }
