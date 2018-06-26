@@ -9,6 +9,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace MOJA_ZGRADA.Data
 {
+    [Table("tbl_Handles")]
     public class Handles
     {
         [ForeignKey("Admin")]

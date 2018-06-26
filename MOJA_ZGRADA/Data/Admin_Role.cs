@@ -9,6 +9,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace MOJA_ZGRADA.Data
 {
+    [Table("tbl_Admin_Role")]
     public class Admin_Role
     {
         [Key]

@@ -9,6 +9,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace MOJA_ZGRADA.Data
 {
+    [Table("tbl_Lives_In")]
     public class Lives_In
     {
         [ForeignKey("User")]
