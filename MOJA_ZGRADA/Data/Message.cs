@@ -9,7 +9,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace MOJA_ZGRADA.Data
 {
-    public class Messages
+    public class Message
     {
         [Key]
         public int Id { get; set; }
@@ -20,9 +20,10 @@ namespace MOJA_ZGRADA.Data
         [ForeignKey("User")]
         public int User_Id { get; set; }
 
+        [Required]
         public string Text { get; set; }
 
-        public string Attachment { get; set; }
+        public string File_URL { get; set; }
 
     }
 }

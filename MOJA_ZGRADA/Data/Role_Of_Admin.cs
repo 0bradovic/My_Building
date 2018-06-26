@@ -16,7 +16,9 @@ namespace MOJA_ZGRADA.Data
 
         [ForeignKey("Admin_Role")]
         public int Admin_Role_Id { get; set; }
-
+        
+        [Required]
+        [StringLength(15, ErrorMessage = "Max 15 characters")]
         public string Role_Name { get; set; }
 
     }

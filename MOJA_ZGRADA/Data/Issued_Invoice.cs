@@ -23,6 +23,8 @@ namespace MOJA_ZGRADA.Data
         [ForeignKey("Building")]
         public int Building_Id { get; set; }
 
+        [Required]
+        [DataType(DataType.Date)]
         public DateTime Invoice_Creation_DateTime { get; set; }
 
     }

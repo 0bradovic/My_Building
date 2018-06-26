@@ -20,8 +20,12 @@ namespace MOJA_ZGRADA.Data
         [ForeignKey("Admin")]
         public int Admin_Id { get; set; }
 
+        [Required]
+        [DataType(DataType.Date)]
         public DateTime Cleaning_Issued_DateTime { get; set; }
 
+        [Required]
+        [DataType(DataType.Date)]
         public DateTime Cleaning_DateTime { get; set; }
 
 

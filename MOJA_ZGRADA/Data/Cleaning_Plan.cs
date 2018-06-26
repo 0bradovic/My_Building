@@ -14,8 +14,12 @@ namespace MOJA_ZGRADA.Data
         [Key]
         public int Id { get; set; }
 
+        [Required]
+        [StringLength(50, ErrorMessage = "Max 50 numbers.")]
         public string Cleaning_Type { get; set; }
 
+        [Required]
+        [StringLength(50)]
         public float Cleaning_Price { get; set; }
 
     }

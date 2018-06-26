@@ -19,20 +19,31 @@ namespace MOJA_ZGRADA.Data
 
         [ForeignKey("Building")]
         public int Building_Id { get; set; }
-
+        
+        [Required]
+        [StringLength(15, ErrorMessage = "Max 15 characters")]
         public string Post_Name { get; set; }
-
+        
+        [Required]
+        [StringLength(15, ErrorMessage = "Max 15 characters")]
         public string Post_Priority { get; set; }
 
+        [Required]
+        [DataType(DataType.Date)]
         public DateTime Post_Creation_DateTime { get; set; }
 
+        [Required]
+        [DataType(DataType.Date)]
         public DateTime Post_Update_DateTime { get; set; }
 
+        [Required]
+        [DataType(DataType.Date)]
         public DateTime Post_LifeTime_DateTime { get; set; }
 
+        [Required]
         public string Text { get; set; }
 
-        public string Attachment { get; set; }
+        public string FIle_URL { get; set; }
 
     }
 }
