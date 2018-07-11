@@ -12,8 +12,8 @@ namespace MOJA_ZGRADA.Data
     [Table("tbl_Lives_In")]
     public class Lives_In
     {
-        [ForeignKey("User")]
-        public int User_Id { get; set; }
+        [ForeignKey("Tenant")]
+        public int Tenant_Id { get; set; }
 
         [ForeignKey("Building")]
         public int Building_Id { get; set; }

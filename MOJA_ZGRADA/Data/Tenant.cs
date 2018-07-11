@@ -9,8 +9,8 @@ using System.ComponentModel.DataAnnotations;
 
 namespace MOJA_ZGRADA.Data
 {
-    [Table("tbl_Admin")]
-    public class Admin
+    [Table("tbl_Tenant")]
+    public class Tenant
     {
         [Key]
         public int Id { get; set; }
@@ -34,14 +34,26 @@ namespace MOJA_ZGRADA.Data
         [Required]
         //[RegularExpression("^(?!0+$)(\\+\\d{1,3}[- ]?)?(?!0+$)\\d{10,15}$", ErrorMessage = "Please enter valid phone no.")]
         public string PhoneNumber { get; set; }
-
+        
         [Required]
         [StringLength(13, MinimumLength = 13, ErrorMessage = "Must have 13 numbers.")]
         public int JMBG { get; set; }
-
+        
         [Required]
         [StringLength(50, ErrorMessage = "Max 50 numbers.")]
         public string Address { get; set; }
+        
+        [Required]
+        [StringLength(10, ErrorMessage = "Max 10.")]
+        public string Apartment_Number { get; set; }
+
+        [Required]
+        [StringLength(3)]
+        public int Floor_Number { get; set; }
+
+        [Required]
+        [StringLength(3)]
+        public int Number_Of_Occupants { get; set; }
 
         //[Required]
         //[RegularExpression("^[a-zA-Z0-9_-]{3,15}$", ErrorMessage = "Min 3 Max 15 characters, can contain only characters, numbers , _ and - ")]
@@ -50,10 +62,6 @@ namespace MOJA_ZGRADA.Data
         //[Required]
         //[RegularExpression("^[a-zA-Z0-9_-]{3,15}$", ErrorMessage = "Min 3 Max 15 characters, can contain only characters, numbers , _ and - ")]
         //public string Password { get; set; }
-
-
-
-
 
     }
 }

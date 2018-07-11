@@ -46,5 +46,12 @@ namespace MOJA_ZGRADA.Data
         [StringLength(3)]
         public int Number_Of_Entrances { get; set; }
 
+        [Required]
+        [StringLength(3)]
+        public int Number_Of_Floors { get; set; }
+
+        [Required]
+        public bool Special_Apartments_Annotation { get; set; } = false;
+
     }
 }

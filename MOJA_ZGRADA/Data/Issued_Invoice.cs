@@ -15,8 +15,8 @@ namespace MOJA_ZGRADA.Data
         [ForeignKey("Invoice")]
         public int Invoice_Id { get; set; }
 
-        [ForeignKey("User")]
-        public int User_Id { get; set; }
+        [ForeignKey("Tenant")]
+        public int Tenant_Id { get; set; }
 
         [ForeignKey("Admin")]
         public int Admin_Id { get; set; }

@@ -7,18 +7,23 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations.Operations;
 using System.ComponentModel.DataAnnotations;
 using MOJA_ZGRADA.Data;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using MOJA_ZGRADA.Context;
 
-namespace MOJA_ZGRADA.Models
+namespace MOJA_ZGRADA.Context
 {
-    public class MyDbContext : DbContext
+    public class MyDbContext : IdentityDbContext<Account, MyRoleManager, string>
     {
 
-        public MyDbContext(DbContextOptions options) : base(options) { }
+        public MyDbContext(DbContextOptions<MyDbContext> options) : base(options) { }
+
+
+        public DbSet<Account> Accounts { get; set; }
 
 
         public virtual DbSet<Admin> Admins { get; set; }
 
-        public virtual DbSet<User> Users { get; set; }
+        public virtual DbSet<Tenant> Tenants { get; set; }
 
         public virtual DbSet<Building> Buildings { get; set; }
 
@@ -27,11 +32,7 @@ namespace MOJA_ZGRADA.Models
         public virtual DbSet<Cleaning_Plan> Cleaning_Plans { get; set; }
 
         public virtual DbSet<Post> Posts { get; set; }
-
-        public virtual DbSet<Admin_Role> Admin_Roles { get; set; }
-
-        public virtual DbSet<Role_Of_Admin> Role_Of_Admins { get; set; }
-
+        
         public virtual DbSet<Handles> Handleses { get; set; }
 
         public virtual DbSet<Issued_Invoice> Issued_Invoices { get; set; }
@@ -44,7 +45,14 @@ namespace MOJA_ZGRADA.Models
 
         public virtual DbSet<Notification> Notifications { get; set; }
 
-        
+
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Admin>().HasAlternateKey(c => new { c.Email, c.JMBG });
+
+
+        }
 
     }
 }

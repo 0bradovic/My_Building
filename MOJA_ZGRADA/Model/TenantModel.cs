@@ -1,20 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
-using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Migrations.Operations;
-using System.ComponentModel.DataAnnotations;
 
-namespace MOJA_ZGRADA.Data
+namespace MOJA_ZGRADA.Model
 {
-    [Table("tbl_Admin")]
-    public class Admin
+    public class TenantModel
     {
-        [Key]
-        public int Id { get; set; }
-
         [Required]
         [StringLength(15, ErrorMessage = "Max 15 characters")]
         public string First_Name { get; set; }
@@ -43,17 +36,20 @@ namespace MOJA_ZGRADA.Data
         [StringLength(50, ErrorMessage = "Max 50 numbers.")]
         public string Address { get; set; }
 
-        //[Required]
-        //[RegularExpression("^[a-zA-Z0-9_-]{3,15}$", ErrorMessage = "Min 3 Max 15 characters, can contain only characters, numbers , _ and - ")]
-        //public string Username { get; set; }
+        [Required]
+        [StringLength(10, ErrorMessage = "Max 10.")]
+        public string Apartment_Number { get; set; }
 
-        //[Required]
-        //[RegularExpression("^[a-zA-Z0-9_-]{3,15}$", ErrorMessage = "Min 3 Max 15 characters, can contain only characters, numbers , _ and - ")]
-        //public string Password { get; set; }
+        [Required]
+        [StringLength(3)]
+        public int Number_Of_Occupants { get; set; }
 
+        [Required]
+        [RegularExpression("^[a-zA-Z0-9_-]{3,15}$", ErrorMessage = "Min 3 Max 15 characters, can contain only characters, numbers , _ and - ")]
+        public string UserName { get; set; }
 
-
-
-
+        [Required]
+        [RegularExpression("^[a-zA-Z0-9_-]{3,15}$", ErrorMessage = "Min 3 Max 15 characters, can contain only characters, numbers , _ and - ")]
+        public string Password { get; set; }
     }
 }
