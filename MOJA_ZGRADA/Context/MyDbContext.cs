@@ -46,12 +46,20 @@ namespace MOJA_ZGRADA.Context
         public virtual DbSet<Notification> Notifications { get; set; }
 
 
-
+        //Initializing unique collumns
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Admin>().HasAlternateKey(c => new { c.Email, c.JMBG });
+            modelBuilder.Entity<Admin>().HasIndex(adm => new { adm.Email, adm.JMBG }).IsUnique(true);
 
+            modelBuilder.Entity<Tenant>().HasIndex(ten => new { ten.Email, ten.JMBG, ten.Address }).IsUnique(true);
 
+            modelBuilder.Entity<Building>().HasIndex(bld => bld.Address).IsUnique(true);
+
+            modelBuilder.Entity<Invoice>().HasIndex(inv => new { inv.Invoice_Type, inv.Invoice_Amount }).IsUnique(true);
+
+            modelBuilder.Entity<Cleaning_Plan>().HasIndex(cp => new { cp.Cleaning_Type, cp.Cleaning_Price }).IsUnique(true);
+            
+            
         }
 
     }
