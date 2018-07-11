@@ -33,8 +33,8 @@ namespace MOJA_ZGRADA
             Account SuperAdmin = await userManager.FindByEmailAsync("boopro@email.com");
             Account Admin = await userManager.FindByEmailAsync("JustAdmin@email.com");
 
-            await userManager.AddToRoleAsync(SuperAdmin, roles[0]);
-            await userManager.AddToRoleAsync(Admin, roles[1]);
+            await userManager.AddToRoleAsync(SuperAdmin, "SuperAdmin");
+            await userManager.AddToRoleAsync(Admin, "Admin");
 
         }
     }

@@ -39,6 +39,7 @@ namespace MOJA_ZGRADA.Controllers
                 return BadRequest(ModelState);
             }
 
+            //Creating new AspNetUser entity (IdentityUser)
             var user = new Account
             {
                 First_Name = adminModel.First_Name,
@@ -54,6 +55,7 @@ namespace MOJA_ZGRADA.Controllers
             {
                 await _userManager.AddToRoleAsync(user, "Admin");
                 
+                //Creating new tbl_Admin entity
                 var adm = new Admin
                 {
                     First_Name = adminModel.First_Name,
