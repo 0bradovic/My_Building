@@ -79,7 +79,7 @@ namespace MOJA_ZGRADA
                 app.UseHsts();
             }
 
-            //Seed.Initialize(context, userManager, roleManager).Wait();
+            Seed.Initialize(context, userManager, roleManager).Wait();
 
             app.UseAuthentication();
             app.UseHttpsRedirection();
