@@ -60,7 +60,7 @@ namespace MOJA_ZGRADA.Migrations
                     Date_Of_Birth = table.Column<DateTime>(nullable: false),
                     Email = table.Column<string>(nullable: false),
                     PhoneNumber = table.Column<string>(nullable: false),
-                    JMBG = table.Column<int>(maxLength: 13, nullable: false),
+                    JMBG = table.Column<string>(maxLength: 13, nullable: false),
                     Address = table.Column<string>(maxLength: 50, nullable: false)
                 },
                 constraints: table =>
@@ -97,7 +97,7 @@ namespace MOJA_ZGRADA.Migrations
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     Cleaning_Type = table.Column<string>(maxLength: 50, nullable: false),
-                    Cleaning_Price = table.Column<float>(maxLength: 50, nullable: false)
+                    Cleaning_Price = table.Column<double>(maxLength: 50, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -139,7 +139,7 @@ namespace MOJA_ZGRADA.Migrations
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     Invoice_Type = table.Column<string>(maxLength: 50, nullable: false),
-                    Invoice_Amount = table.Column<float>(maxLength: 50, nullable: false)
+                    Invoice_Amount = table.Column<double>(maxLength: 50, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -234,7 +234,7 @@ namespace MOJA_ZGRADA.Migrations
                     Date_Of_Birth = table.Column<DateTime>(nullable: false),
                     Email = table.Column<string>(nullable: false),
                     PhoneNumber = table.Column<string>(nullable: false),
-                    JMBG = table.Column<int>(maxLength: 13, nullable: false),
+                    JMBG = table.Column<string>(maxLength: 13, nullable: false),
                     Address = table.Column<string>(maxLength: 50, nullable: false),
                     Apartment_Number = table.Column<string>(maxLength: 10, nullable: false),
                     Floor_Number = table.Column<int>(maxLength: 3, nullable: false),

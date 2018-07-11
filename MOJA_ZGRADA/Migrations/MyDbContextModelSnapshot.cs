@@ -203,7 +203,8 @@ namespace MOJA_ZGRADA.Migrations
                         .IsRequired()
                         .HasMaxLength(15);
 
-                    b.Property<int>("JMBG")
+                    b.Property<string>("JMBG")
+                        .IsRequired()
                         .HasMaxLength(13);
 
                     b.Property<string>("Last_Name")
@@ -270,7 +271,7 @@ namespace MOJA_ZGRADA.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<float>("Cleaning_Price")
+                    b.Property<double>("Cleaning_Price")
                         .HasMaxLength(50);
 
                     b.Property<string>("Cleaning_Type")
@@ -321,7 +322,7 @@ namespace MOJA_ZGRADA.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<float>("Invoice_Amount")
+                    b.Property<double>("Invoice_Amount")
                         .HasMaxLength(50);
 
                     b.Property<string>("Invoice_Type")
@@ -457,7 +458,8 @@ namespace MOJA_ZGRADA.Migrations
                     b.Property<int>("Floor_Number")
                         .HasMaxLength(3);
 
-                    b.Property<int>("JMBG")
+                    b.Property<string>("JMBG")
+                        .IsRequired()
                         .HasMaxLength(13);
 
                     b.Property<string>("Last_Name")

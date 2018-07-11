@@ -21,7 +21,7 @@ namespace MOJA_ZGRADA.Data
         
         [Required]
         [StringLength(50)]
-        public float Invoice_Amount { get; set; }
+        public double Invoice_Amount { get; set; }
 
 
     }

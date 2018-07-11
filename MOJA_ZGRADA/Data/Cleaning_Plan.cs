@@ -21,7 +21,7 @@ namespace MOJA_ZGRADA.Data
 
         [Required]
         [StringLength(50)]
-        public float Cleaning_Price { get; set; }
+        public double Cleaning_Price { get; set; }
 
     }
 }

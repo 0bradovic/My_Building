@@ -37,7 +37,7 @@ namespace MOJA_ZGRADA.Data
 
         [Required]
         [StringLength(13, MinimumLength = 13, ErrorMessage = "Must have 13 numbers.")]
-        public int JMBG { get; set; }
+        public string JMBG { get; set; }
 
         [Required]
         [StringLength(50, ErrorMessage = "Max 50 numbers.")]
