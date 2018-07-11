@@ -46,9 +46,12 @@ namespace MOJA_ZGRADA.Context
         public virtual DbSet<Notification> Notifications { get; set; }
 
 
-        //Initializing unique collumns
+        //Fluent API
+        //Initializing unique collumns, composite keys
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
+
             modelBuilder.Entity<Admin>().HasIndex(adm => new { adm.Email, adm.JMBG }).IsUnique(true);
 
             modelBuilder.Entity<Tenant>().HasIndex(ten => new { ten.Email, ten.JMBG, ten.Address }).IsUnique(true);
@@ -58,8 +61,16 @@ namespace MOJA_ZGRADA.Context
             modelBuilder.Entity<Invoice>().HasIndex(inv => new { inv.Invoice_Type, inv.Invoice_Amount }).IsUnique(true);
 
             modelBuilder.Entity<Cleaning_Plan>().HasIndex(cp => new { cp.Cleaning_Type, cp.Cleaning_Price }).IsUnique(true);
-            
-            
+
+            modelBuilder.Entity<Created_Cleaning_Plan>().HasKey(ccp => new { ccp.Cleaning_Plan_Id, ccp.Building_Id, ccp.Admin_Id });
+
+            modelBuilder.Entity<Issued_Invoice>().HasKey(iiv => new { iiv.Invoice_Id, iiv.Tenant_Id, iiv.Admin_Id, iiv.Building_Id });
+
+            modelBuilder.Entity<Handles>().HasKey(han => new { han.Admin_Id, han.Building_Id });
+
+            modelBuilder.Entity<Lives_In>().HasKey(lin => new { lin.Tenant_Id, lin.Building_Id });
+
+
         }
 
     }
