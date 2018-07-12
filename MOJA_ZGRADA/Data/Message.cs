@@ -20,8 +20,7 @@ namespace MOJA_ZGRADA.Data
 
         [ForeignKey("Tenant")]
         public int Tenant_Id { get; set; }
-
-        [Required]
+        
         public string Text { get; set; }
 
         public string File_URL { get; set; }

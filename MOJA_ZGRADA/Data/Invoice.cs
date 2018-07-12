@@ -15,14 +15,9 @@ namespace MOJA_ZGRADA.Data
         [Key]
         public int Id { get; set; }
         
-        [Required]
-        [StringLength(50, ErrorMessage = "Max 50 numbers.")]
         public string Invoice_Type { get; set; }
         
-        [Required]
-        [StringLength(50)]
         public double Invoice_Amount { get; set; }
-
-
+        
     }
 }

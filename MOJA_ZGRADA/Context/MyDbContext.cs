@@ -52,16 +52,37 @@ namespace MOJA_ZGRADA.Context
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<Admin>().HasIndex(adm => new { adm.Email, adm.JMBG }).IsUnique(true);
+            //Admin unique collumns
+            modelBuilder.Entity<Admin>().HasIndex(adm => adm.Email).IsUnique(true);
 
-            modelBuilder.Entity<Tenant>().HasIndex(ten => new { ten.Email, ten.JMBG, ten.Address }).IsUnique(true);
+            modelBuilder.Entity<Admin>().HasIndex(adm => adm.JMBG).IsUnique(true);
 
+
+            //Tenant unique collumns
+            modelBuilder.Entity<Tenant>().HasIndex(ten => ten.Email).IsUnique(true);
+
+            modelBuilder.Entity<Tenant>().HasIndex(ten => ten.JMBG).IsUnique(true);
+
+            modelBuilder.Entity<Tenant>().HasIndex(ten => ten.Address).IsUnique(true);
+            
+
+            //Building unique collumns
             modelBuilder.Entity<Building>().HasIndex(bld => bld.Address).IsUnique(true);
+            
 
-            modelBuilder.Entity<Invoice>().HasIndex(inv => new { inv.Invoice_Type, inv.Invoice_Amount }).IsUnique(true);
+            //Invoice unique collumns
+            modelBuilder.Entity<Invoice>().HasIndex(inv => inv.Invoice_Type).IsUnique(true);
 
-            modelBuilder.Entity<Cleaning_Plan>().HasIndex(cp => new { cp.Cleaning_Type, cp.Cleaning_Price }).IsUnique(true);
+            modelBuilder.Entity<Invoice>().HasIndex(inv => inv.Invoice_Amount).IsUnique(true);
+            
 
+            //Cleaning_Plan  unique collumns
+            modelBuilder.Entity<Cleaning_Plan>().HasIndex(cp => cp.Cleaning_Type).IsUnique(true);
+
+            modelBuilder.Entity<Cleaning_Plan>().HasIndex(cp => cp.Cleaning_Price).IsUnique(true);
+            
+            
+            //Composite Keys
             modelBuilder.Entity<Created_Cleaning_Plan>().HasKey(ccp => new { ccp.Cleaning_Plan_Id, ccp.Building_Id, ccp.Admin_Id });
 
             modelBuilder.Entity<Issued_Invoice>().HasKey(iiv => new { iiv.Invoice_Id, iiv.Tenant_Id, iiv.Admin_Id, iiv.Building_Id });

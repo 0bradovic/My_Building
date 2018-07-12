@@ -14,7 +14,6 @@ namespace MOJA_ZGRADA.Data
     {
         [Key]
         public int Id { get; set; }
-
-
+        
     }
 }

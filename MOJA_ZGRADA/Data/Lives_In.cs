@@ -17,8 +17,7 @@ namespace MOJA_ZGRADA.Data
 
         [ForeignKey("Building")]
         public int Building_Id { get; set; }
-
-        [Required]
+        
         [DataType(DataType.Date)]
         public DateTime Started_Living_DateTime { get; set; }
 

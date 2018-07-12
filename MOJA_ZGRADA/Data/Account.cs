@@ -11,6 +11,6 @@ namespace MOJA_ZGRADA.Data
         public string First_Name { get; set; }
 
         public string Last_Name { get; set; }
-        
+
     }
 }
