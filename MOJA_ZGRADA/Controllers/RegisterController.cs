@@ -14,7 +14,7 @@ namespace MOJA_ZGRADA.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class RegisterController : ControllerBase    //For Admin's initial registration of building+tenants
+    public class RegisterController : ControllerBase    //For Admin's initial registration of building + tenants
     {
         private readonly MyDbContext _context;
         private UserManager<Account> _userManager;
@@ -81,14 +81,6 @@ namespace MOJA_ZGRADA.Controllers
 
                     var Password = User_Name + "#";
 
-                    var tenant = new Tenant
-                    {
-                        UserName = User_Name
-                    };
-
-                    CreatedAtAction("GetTenant", new { id = tenant.UserName }, tenant);
-                    _context.Tenants.Add(tenant);
-
                     var user = new Account
                     {
                         UserName = User_Name,
@@ -96,6 +88,19 @@ namespace MOJA_ZGRADA.Controllers
                     };
                     IdentityResult result = await _userManager.CreateAsync(user, Password);
 
+                    if (!result.Succeeded)
+                    {
+                        return NotFound(result);
+                    }
+
+                    var tenant = new Tenant
+                    {
+                        UserName = User_Name
+                    };
+
+                    CreatedAtAction("GetTenant", new { id = tenant.UserName }, tenant);
+                    _context.Tenants.Add(tenant);
+                    
                     await _userManager.AddToRoleAsync(user, "Tenant");
                 }
 
@@ -103,8 +108,7 @@ namespace MOJA_ZGRADA.Controllers
                 _context.Buildings.Add(building);
                 await _context.SaveChangesAsync();
                 
-
-
+                
                 return Ok(building);
 
             }
