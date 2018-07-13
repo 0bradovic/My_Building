@@ -37,6 +37,9 @@ namespace MOJA_ZGRADA.Data
         public int Floor_Number { get; set; }
         
         public int Number_Of_Occupants { get; set; }
-        
+
+        [Required]
+        public string UserName { get; set; }
+
     }
 }

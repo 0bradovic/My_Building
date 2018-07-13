@@ -31,5 +31,8 @@ namespace MOJA_ZGRADA.Data
         
         public string Address { get; set; }
         
+        [Required]
+        public string UserName { get; set; }
+
     }
 }
