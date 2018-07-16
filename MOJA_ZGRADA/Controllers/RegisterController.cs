@@ -66,11 +66,14 @@ namespace MOJA_ZGRADA.Controllers
                 Number_Of_Floors = registerModel.Number_Of_Floors,
                 Special_Apartments_Annotation = registerModel.Special_Apartments_Annotation
             };
-
-
+            
 
             try
             {
+                CreatedAtAction("GetBuilding", new { id = registerModel.Address }, building);
+                _context.Buildings.Add(building);
+                await _context.SaveChangesAsync();
+
                 for (int i = 1; i <= registerModel.Number_Of_Tenants; i++)
                 {
                     var meta_User_Name = registerModel.Address + "Stan" + i;
@@ -95,7 +98,9 @@ namespace MOJA_ZGRADA.Controllers
 
                     var tenant = new Tenant
                     {
-                        UserName = User_Name
+                        UserName = User_Name,
+                        Apartment_Number = i.ToString(),
+                        Address = registerModel.Address
                     };
 
                     CreatedAtAction("GetTenant", new { id = tenant.UserName }, tenant);
@@ -103,11 +108,6 @@ namespace MOJA_ZGRADA.Controllers
                     
                     await _userManager.AddToRoleAsync(user, "Tenant");
                 }
-
-                CreatedAtAction("GetBuilding", new { id = registerModel.Address }, building);
-                _context.Buildings.Add(building);
-                await _context.SaveChangesAsync();
-                
                 
                 return Ok(building);
 

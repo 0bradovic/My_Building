@@ -62,8 +62,7 @@ namespace MOJA_ZGRADA.Context
             modelBuilder.Entity<Tenant>().HasIndex(ten => ten.Email).IsUnique(true);
 
             modelBuilder.Entity<Tenant>().HasIndex(ten => ten.JMBG).IsUnique(true);
-
-            modelBuilder.Entity<Tenant>().HasIndex(ten => ten.Address).IsUnique(true);
+            
             
 
             //Building unique collumns

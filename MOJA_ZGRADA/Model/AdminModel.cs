@@ -23,7 +23,6 @@ namespace MOJA_ZGRADA.Model
         [StringLength(13, MinimumLength = 13, ErrorMessage = "Must have 13 numbers.")]
         public string JMBG { get; set; }
         
-        [StringLength(50, ErrorMessage = "Max 50 numbers.")]
         public string Address { get; set; }
 
         [Required]

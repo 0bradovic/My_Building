@@ -65,10 +65,11 @@ namespace MOJA_ZGRADA.Controllers
                         First_Name = adminModel.First_Name,
                         Last_Name = adminModel.Last_Name,
                         Email = adminModel.Email,
-                        Date_Of_Birth = adminModel.Date_Of_Birth,
+                        //Date_Of_Birth = adminModel.Date_Of_Birth,
                         PhoneNumber = adminModel.PhoneNumber,
-                        JMBG = adminModel.JMBG,
-                        Address = adminModel.Address
+                        UserName = adminModel.UserName
+                        //JMBG = adminModel.JMBG,
+                        //Address = adminModel.Address
                     };
                     CreatedAtAction("GetAdmin", new { id = adminModel.UserName }, adm);
 
@@ -86,9 +87,6 @@ namespace MOJA_ZGRADA.Controllers
             {
                 return NotFound(new { ex });
             }
-
-
-
         }
 
 
