@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using MOJA_ZGRADA.Context;
 using MOJA_ZGRADA.Data;
 using MOJA_ZGRADA.Model;
+using System.Linq;
 
 namespace MOJA_ZGRADA.Controllers
 {
@@ -74,14 +75,11 @@ namespace MOJA_ZGRADA.Controllers
                 _context.Buildings.Add(building);
                 await _context.SaveChangesAsync();
 
-                for (int i = 1; i <= registerModel.Number_Of_Tenants; i++)
+                for (int i = 1; i <= registerModel.Number_Of_Apartments; i++)
                 {
                     var meta_User_Name = registerModel.Address + "Stan" + i;
-
                     var Array = meta_User_Name.Split(" ");
-
                     var User_Name = string.Join("", Array);
-
                     var Password = User_Name + "#";
 
                     var user = new Account
@@ -99,7 +97,7 @@ namespace MOJA_ZGRADA.Controllers
                     var tenant = new Tenant
                     {
                         UserName = User_Name,
-                        Apartment_Number = i.ToString(),
+                        Apartment_Number = i,
                         Address = registerModel.Address
                     };
 
@@ -107,6 +105,8 @@ namespace MOJA_ZGRADA.Controllers
                     _context.Tenants.Add(tenant);
                     
                     await _userManager.AddToRoleAsync(user, "Tenant");
+                    
+                    
                 }
                 
                 return Ok(building);
@@ -114,10 +114,89 @@ namespace MOJA_ZGRADA.Controllers
             }
             catch (Exception ex)
             {
-                return NotFound(new { ex });
+                return NotFound(ex);
             }
 
         }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        [Route("NewTenant")]
+        public async Task<IActionResult> NewTenant(/*[FromRoute] string buildingAddress, */[FromBody] TenantModel tenantModel)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            try
+            {
+                //get number of last apartment
+                int maxApartmentNumber = _context.Buildings.Where(t => t.Address == tenantModel.Address).Select(i => i.Number_Of_Apartments).DefaultIfEmpty(0).Max();
+
+                var meta_User_Name = tenantModel.Address + "Stan" + (maxApartmentNumber + 1).ToString();
+                var Array = meta_User_Name.Split(" ");
+                var User_Name = string.Join("", Array);
+                var Password = User_Name + "#";
+
+                var user = new Account
+                {
+                    UserName = User_Name,
+                    First_Name = tenantModel.First_Name,
+                    Last_Name = tenantModel.Last_Name,
+                    PhoneNumber = tenantModel.PhoneNumber,
+                    Email = tenantModel.Email,
+                    SecurityStamp = Guid.NewGuid().ToString()
+                };
+                //new tenant account
+                IdentityResult result = await _userManager.CreateAsync(user, Password);
+
+                if (!result.Succeeded)
+                {
+                    return NotFound(result);
+                }
+
+                var tenant = new Tenant
+                {
+                    UserName = User_Name,
+                    First_Name = tenantModel.First_Name,
+                    Last_Name = tenantModel.Last_Name,
+                    Address = tenantModel.Address,
+                    Email = tenantModel.Email,
+
+                    Date_Of_Birth = tenantModel.Date_Of_Birth,
+                    PhoneNumber = tenantModel.PhoneNumber,
+                    JMBG = tenantModel.JMBG,
+                    Floor_Number = tenantModel.Floor_Number,
+                    Number_Of_Occupants = tenantModel.Number_Of_Occupants,
+
+                    Apartment_Number = maxApartmentNumber + 1
+                };
+
+                //new tenant
+                CreatedAtAction("GetTenant", new { id = tenant.UserName }, tenant);
+                _context.Tenants.Add(tenant);
+                await _userManager.AddToRoleAsync(user, "Tenant");
+
+                //increase number of apartments for building
+                var apartmentIncrement = _context.Buildings.SingleOrDefault(b => b.Address == tenantModel.Address);
+                if (result != null)
+                {
+                    apartmentIncrement.Number_Of_Apartments = maxApartmentNumber+1;
+                    _context.SaveChanges();
+                }
+
+                return Ok(tenant);
+            }
+            catch(Exception ex)
+            {
+                return NotFound(ex);
+            }
+        }
+
+
+
+
 
         // PUT: api/Register/5
         [HttpPut("{id}")]
@@ -135,11 +214,7 @@ namespace MOJA_ZGRADA.Controllers
 
 
 
-
-
-
-
-
+        
         //Only for incode calling [PostAsync]
         public async Task<IActionResult> GetBuilding([FromRoute] string id)
         {

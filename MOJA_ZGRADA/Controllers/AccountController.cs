@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -22,11 +23,14 @@ namespace MOJA_ZGRADA.Controllers
         private UserManager<Account> _userManager;
         private RoleManager<MyRoleManager> _roleManager;
 
-        public AccountController(UserManager<Account> userManager, MyDbContext context, RoleManager<MyRoleManager> roleManager)
+        public ClaimsPrincipal User;
+
+        public AccountController(UserManager<Account> userManager, MyDbContext context, RoleManager<MyRoleManager> roleManager, ClaimsPrincipal _user)
         {
             _context = context;
             _userManager = userManager;
             _roleManager = roleManager;
+            _user = User;
         }
         
         //REDOSLED JE BITAN : Http -> Authorize -> Route
@@ -65,14 +69,12 @@ namespace MOJA_ZGRADA.Controllers
                         First_Name = adminModel.First_Name,
                         Last_Name = adminModel.Last_Name,
                         Email = adminModel.Email,
-                        //Date_Of_Birth = adminModel.Date_Of_Birth,
                         PhoneNumber = adminModel.PhoneNumber,
                         UserName = adminModel.UserName
-                        //JMBG = adminModel.JMBG,
-                        //Address = adminModel.Address
                     };
-                    CreatedAtAction("GetAdmin", new { id = adminModel.UserName }, adm);
 
+                    //adding new Admin entity
+                    CreatedAtAction("GetAdmin", new { id = adminModel.UserName }, adm);
                     _context.Admins.Add(adm);
                     await _context.SaveChangesAsync();
 
@@ -94,51 +96,49 @@ namespace MOJA_ZGRADA.Controllers
         [Authorize(Roles = "SuperAdmin")]
         [Route("admTabela")]
         //[ValidateAntiForgeryToken]
-        public IActionResult UpdateAdminTable([FromRoute] string id, [FromBody] AdminModel adminModel)
+        public async Task<IActionResult> UpdateAdminTable([FromRoute] string id, [FromBody] AdminModel adminModel)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            if (id != adminModel.UserName)
-            {
-                return BadRequest();
-            }
+            //if (id != adminModel.UserName)
+            //{
+            //    return BadRequest();
+            //}
 
-            var user = new Account
-            {
-                First_Name = adminModel.First_Name,
-                Last_Name = adminModel.Last_Name,
-                //UserName = adminModel.UserName,
-                PhoneNumber = adminModel.PhoneNumber,
-                //Email = adminModel.Email
-            };
 
-            var adm = new Admin
-            {
-                First_Name = adminModel.First_Name,
-                Last_Name = adminModel.Last_Name,
-                //Email = adminModel.Email,
-                Date_Of_Birth = adminModel.Date_Of_Birth,
-                PhoneNumber = adminModel.PhoneNumber,
-                JMBG = adminModel.JMBG,
-                Address = adminModel.Address
-            };
 
-            var dbJMBG = _context.Admins.Where(x => x.JMBG == adminModel.JMBG).SingleOrDefault();
 
-            if (dbJMBG == null)
-            {
-                _context.Entry(adm).State = EntityState.Modified;
+            //Update AspNetUsers
+            Account u;//=  _userManager.GetByIdAsync();
+            //u.First_Name = adminModel.First_Name;
+            //u.Last_Name = adminModel.Last_Name;
+            //u.Email = adminModel.Email;
+            
+            
 
-                _context.Entry(user).State = EntityState.Modified;
-            }
+            //Update tbl_Admin
+            var adm = _context.Admins.Find(id);
+            adm.First_Name = adminModel.First_Name;
+            adm.Last_Name = adminModel.Last_Name;
+            adm.Email = adminModel.Email;
+            adm.Date_Of_Birth = adminModel.Date_Of_Birth;
+            adm.PhoneNumber = adminModel.PhoneNumber;
+            adm.JMBG = adminModel.JMBG;
+            adm.Address = adminModel.Address;
 
             try
             {
+
+                //_userManager.UpdateAsync(u);
+
+                _context.Entry(adm).State = EntityState.Modified;
+            
                 _context.SaveChanges();
-                return Ok();
+
+                return Ok(adm);
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -166,22 +166,14 @@ namespace MOJA_ZGRADA.Controllers
 
             var user = new Account
             {
-                //First_Name = adminModel.First_Name,
-                //Last_Name = adminModel.Last_Name,
-                UserName = adminModel.UserName,
-                //PhoneNumber = adminModel.PhoneNumber,
-                Email = adminModel.Email
+                UserName = adminModel.UserName
             };
+
+            //_userManager.ErrorDescriber.DuplicateEmail
 
             var adm = new Admin
             {
-                //First_Name = adminModel.First_Name,
-                //Last_Name = adminModel.Last_Name,
-                Email = adminModel.Email,
-                //Date_Of_Birth = adminModel.Date_Of_Birth,
-                //PhoneNumber = adminModel.PhoneNumber,
-                //JMBG = adminModel.JMBG,
-                //Address = adminModel.Address
+                UserName = adminModel.UserName
             };
 
             
@@ -221,14 +213,5 @@ namespace MOJA_ZGRADA.Controllers
 
             return Ok(Admin);
         }
-
-
-
-
-
-
-
-
-
     }
 }

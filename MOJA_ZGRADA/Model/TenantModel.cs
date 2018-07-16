@@ -25,14 +25,18 @@ namespace MOJA_ZGRADA.Model
         
         public string Address { get; set; }
         
-        public string Apartment_Number { get; set; }
-        
+        public int Apartment_Number { get; set; }
+
+        public string Apartment_Number_Sufixed { get; set; } = null;
+
         public int Number_Of_Occupants { get; set; }
+        
+        public int Floor_Number { get; set; }
 
-        [Required]
-        public string UserName { get; set; }
+        //[Required]
+        //public string UserName { get; set; }
 
-        [Required]
-        public string Password { get; set; }
+        //[Required]
+        //public string Password { get; set; }
     }
 }

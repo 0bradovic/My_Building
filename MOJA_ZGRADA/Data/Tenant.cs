@@ -32,13 +32,14 @@ namespace MOJA_ZGRADA.Data
         
         public string Address { get; set; }
         
-        public string Apartment_Number { get; set; }
+        public int Apartment_Number { get; set; }
+
+        public string Apartment_Number_Sufixed { get; set; } = null;
         
         public int Floor_Number { get; set; }
         
         public int Number_Of_Occupants { get; set; }
-
-        [Required]
+        
         public string UserName { get; set; }
 
     }
