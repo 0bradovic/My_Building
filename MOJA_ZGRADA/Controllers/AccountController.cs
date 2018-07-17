@@ -12,6 +12,9 @@ using Microsoft.EntityFrameworkCore;
 using MOJA_ZGRADA.Context;
 using MOJA_ZGRADA.Data;
 using MOJA_ZGRADA.Model;
+using System.Web.Http;
+using System.Reflection;
+using MOJA_ZGRADA.Static;
 
 namespace MOJA_ZGRADA.Controllers
 {
@@ -22,15 +25,13 @@ namespace MOJA_ZGRADA.Controllers
         private readonly MyDbContext _context;
         private UserManager<Account> _userManager;
         private RoleManager<MyRoleManager> _roleManager;
+        
 
-        public ClaimsPrincipal User;
-
-        public AccountController(UserManager<Account> userManager, MyDbContext context, RoleManager<MyRoleManager> roleManager, ClaimsPrincipal _user)
+        public AccountController(UserManager<Account> userManager, MyDbContext context, RoleManager<MyRoleManager> roleManager)
         {
             _context = context;
             _userManager = userManager;
             _roleManager = roleManager;
-            _user = User;
         }
         
         //REDOSLED JE BITAN : Http -> Authorize -> Route
@@ -87,108 +88,120 @@ namespace MOJA_ZGRADA.Controllers
             }
             catch (SqlException ex)
             {
-                return NotFound(new { ex });
+                return NotFound(ex);
             }
         }
 
 
-        [HttpPut("{id}")]
+        [HttpPut]
         [Authorize(Roles = "SuperAdmin")]
-        [Route("admTabela")]
+        [Route("UpdatePersonal")]
         //[ValidateAntiForgeryToken]
-        public async Task<IActionResult> UpdateAdminTable([FromRoute] string id, [FromBody] AdminModel adminModel)
+        public async Task<IActionResult> UpdatePersonal([FromQuery] int id, [FromBody] AdminModel adminModel)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
+            
+            //Update tbl_Admin
+            var admId = _context.Admins.Where(t => t.Id == id).Select(i => i.Id).FirstOrDefault();
+            var adm = _context.Admins.Find(admId);
+            var oldUser = adm.UserName;
 
-            //if (id != adminModel.UserName)
-            //{
-            //    return BadRequest();
-            //}
-
-
+            PropertiesComparison.CompareAndForward(adm, adminModel);
+            //adm.First_Name = adminModel.First_Name;
+            //adm.Last_Name = adminModel.Last_Name;
+            //adm.Email = adminModel.Email;
+            //adm.Date_Of_Birth = adminModel.Date_Of_Birth;
+            //adm.PhoneNumber = adminModel.PhoneNumber;
+            //adm.JMBG = adminModel.JMBG;
+            //adm.Address = adminModel.Address;
 
 
             //Update AspNetUsers
-            Account u;//=  _userManager.GetByIdAsync();
+            Account u = _userManager.FindByNameAsync(oldUser).Result;
+
+
+            PropertiesComparison.CompareAndForward(u, adminModel);
             //u.First_Name = adminModel.First_Name;
             //u.Last_Name = adminModel.Last_Name;
             //u.Email = adminModel.Email;
-            
-            
-
-            //Update tbl_Admin
-            var adm = _context.Admins.Find(id);
-            adm.First_Name = adminModel.First_Name;
-            adm.Last_Name = adminModel.Last_Name;
-            adm.Email = adminModel.Email;
-            adm.Date_Of_Birth = adminModel.Date_Of_Birth;
-            adm.PhoneNumber = adminModel.PhoneNumber;
-            adm.JMBG = adminModel.JMBG;
-            adm.Address = adminModel.Address;
 
             try
             {
-
-                //_userManager.UpdateAsync(u);
-
+                //Execute updates
+                var result = await _userManager.UpdateAsync(u);
+                if (!result.Succeeded)
+                {
+                    return NotFound(result);
+                }
                 _context.Entry(adm).State = EntityState.Modified;
-            
                 _context.SaveChanges();
-
+                
                 return Ok(adm);
             }
-            catch (DbUpdateConcurrencyException)
+            catch (DbUpdateConcurrencyException ex)
             {
-                return NotFound();
+                return NotFound(ex);
             }
         }
 
 
 
-        [HttpPut("{id}")]
+        [HttpPut]
         [Authorize(Roles = "SuperAdmin")]
-        [Route("accTabela")]
+        [Route("UpdateAccount")]
         //[ValidateAntiForgeryToken]
-        public IActionResult UpdateAccountTable([FromRoute] string id, [FromBody] AdminModel adminModel)
+        public async Task<IActionResult> UpdateAccount([FromQuery] int id, [FromBody] AdminModel adminModel)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            if (id != adminModel.UserName)
-            {
-                return BadRequest();
-            }
 
-            var user = new Account
+            //Update tbl_Admin
+            var admId = _context.Admins.Where(t => t.Id == id).Select(i => i.Id).FirstOrDefault();
+            var adm = _context.Admins.Find(admId);
+            var oldUser = adm.UserName;
+
+            PropertiesComparison.CompareAndForward(adm, adminModel);
+            //adm.UserName = adminModel.UserName;
+
+
+            //Update AspNetUsers
+            Account u = _userManager.FindByNameAsync(oldUser).Result;
+            PropertiesComparison.CompareAndForward(u, adminModel);
+            //u.UserName = adminModel.UserName;
+
+            if (u == null)
             {
-                UserName = adminModel.UserName
-            };
+                return NotFound(adminModel);
+            }
+            u.PasswordHash = _userManager.PasswordHasher.HashPassword(u, adminModel.Password);
+            
 
             //_userManager.ErrorDescriber.DuplicateEmail
 
-            var adm = new Admin
-            {
-                UserName = adminModel.UserName
-            };
-
-            
-            _context.Entry(adm).State = EntityState.Modified;
-
-            _context.Entry(user).State = EntityState.Modified;
             
             try
             {
+                //Execute updates
+                var result = await _userManager.UpdateAsync(u);
+                if (!result.Succeeded)
+                {
+                    return NotFound(result);
+                }
+                _context.Entry(adm).State = EntityState.Modified;
                 _context.SaveChanges();
+
+
                 return Ok();
             }
-            catch (DbUpdateConcurrencyException)
+            catch (DbUpdateConcurrencyException ex)
             {
-                return NotFound();
+                return NotFound(ex);
             }
         }
 

@@ -25,10 +25,10 @@ namespace MOJA_ZGRADA.Model
         
         public string Address { get; set; }
 
-        [Required]
+        //[Required]
         public string UserName { get; set; }
 
-        [Required]
+        //[Required]
         public string Password { get; set; }
     }
 }

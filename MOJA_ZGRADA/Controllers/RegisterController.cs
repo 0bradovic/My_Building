@@ -71,12 +71,15 @@ namespace MOJA_ZGRADA.Controllers
 
             try
             {
+                //New Building entity
                 CreatedAtAction("GetBuilding", new { id = registerModel.Address }, building);
                 _context.Buildings.Add(building);
                 await _context.SaveChangesAsync();
 
                 for (int i = 1; i <= registerModel.Number_Of_Apartments; i++)
                 {
+                    //UserName template: Address+Stan+brStana
+                    //Password template: Address+Stan+BrStana+#
                     var meta_User_Name = registerModel.Address + "Stan" + i;
                     var Array = meta_User_Name.Split(" ");
                     var User_Name = string.Join("", Array);
@@ -87,6 +90,7 @@ namespace MOJA_ZGRADA.Controllers
                         UserName = User_Name,
                         SecurityStamp = Guid.NewGuid().ToString()
                     };
+                    //new tenant account
                     IdentityResult result = await _userManager.CreateAsync(user, Password);
 
                     if (!result.Succeeded)
@@ -101,12 +105,11 @@ namespace MOJA_ZGRADA.Controllers
                         Address = registerModel.Address
                     };
 
+                    //new tenant
                     CreatedAtAction("GetTenant", new { id = tenant.UserName }, tenant);
                     _context.Tenants.Add(tenant);
                     
                     await _userManager.AddToRoleAsync(user, "Tenant");
-                    
-                    
                 }
                 
                 return Ok(building);
@@ -122,18 +125,22 @@ namespace MOJA_ZGRADA.Controllers
         [HttpPost]
         [Authorize(Roles = "Admin")]
         [Route("NewTenant")]
-        public async Task<IActionResult> NewTenant(/*[FromRoute] string buildingAddress, */[FromBody] TenantModel tenantModel)
+        public async Task<IActionResult> NewTenant([FromBody] TenantModel tenantModel)  //For adding new single tenant
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
+            //TO ADD BUILDING CHECK!
+
             try
             {
                 //get number of last apartment
                 int maxApartmentNumber = _context.Buildings.Where(t => t.Address == tenantModel.Address).Select(i => i.Number_Of_Apartments).DefaultIfEmpty(0).Max();
 
+                //UserName template: Address+Stan+brStana
+                //Password template: Address+Stan+BrStana+#
                 var meta_User_Name = tenantModel.Address + "Stan" + (maxApartmentNumber + 1).ToString();
                 var Array = meta_User_Name.Split(" ");
                 var User_Name = string.Join("", Array);
