@@ -26,7 +26,6 @@ namespace MOJA_ZGRADA.Controllers
         private UserManager<Account> _userManager;
         private RoleManager<MyRoleManager> _roleManager;
         
-
         public AccountController(UserManager<Account> userManager, MyDbContext context, RoleManager<MyRoleManager> roleManager)
         {
             _context = context;
@@ -35,11 +34,13 @@ namespace MOJA_ZGRADA.Controllers
         }
         
         //REDOSLED JE BITAN : Http -> Authorize -> Route
+
+        //POST: api/Account/Admin/Create
         [HttpPost]
         [Authorize(Roles = "SuperAdmin")]
-        [Route("Create/Admin")]
+        [Route("Admin/Create")]
         //[ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateAdmin([FromBody] AdminModel adminModel)
+        public async Task<IActionResult> AdminCreate([FromBody] AdminModel adminModel)  //Admin Registration
         {
             if (!ModelState.IsValid)
             {
@@ -92,12 +93,12 @@ namespace MOJA_ZGRADA.Controllers
             }
         }
 
-
+        //PUT: api/Account/Admin/Update/Personal
         [HttpPut]
         [Authorize(Roles = "SuperAdmin")]
-        [Route("UpdatePersonal")]
+        [Route("Admin/Update/Personal")]
         //[ValidateAntiForgeryToken]
-        public async Task<IActionResult> UpdatePersonal([FromQuery] int id, [FromBody] AdminModel adminModel)
+        public async Task<IActionResult> AdminUpdatePersonal([FromQuery] int id, [FromBody] AdminAccountModel adminModel)    //Update Admin's Personal Info (focus on tbl_Admin)
         {
             if (!ModelState.IsValid)
             {
@@ -107,6 +108,12 @@ namespace MOJA_ZGRADA.Controllers
             //Update tbl_Admin
             var admId = _context.Admins.Where(t => t.Id == id).Select(i => i.Id).FirstOrDefault();
             var adm = _context.Admins.Find(admId);
+
+            if(adm==null)
+            {
+                return NotFound(id);
+            }
+
             var oldUser = adm.UserName;
 
             PropertiesComparison.CompareAndForward(adm, adminModel);
@@ -128,6 +135,10 @@ namespace MOJA_ZGRADA.Controllers
             //u.Last_Name = adminModel.Last_Name;
             //u.Email = adminModel.Email;
 
+
+
+            //_userManager.ErrorDescriber.DuplicateEmail
+
             try
             {
                 //Execute updates
@@ -148,22 +159,27 @@ namespace MOJA_ZGRADA.Controllers
         }
 
 
-
+        //PUT: api/Account/Admin/Update/Account
         [HttpPut]
         [Authorize(Roles = "SuperAdmin")]
-        [Route("UpdateAccount")]
+        [Route("Admin/Update/Account")]
         //[ValidateAntiForgeryToken]
-        public async Task<IActionResult> UpdateAccount([FromQuery] int id, [FromBody] AdminModel adminModel)
+        public async Task<IActionResult> AdminUpdateAccount([FromQuery] int id, [FromBody] AdminPersonalModel adminModel)    //Update Admin's account info (Usr and Pass)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-
             //Update tbl_Admin
             var admId = _context.Admins.Where(t => t.Id == id).Select(i => i.Id).FirstOrDefault();
             var adm = _context.Admins.Find(admId);
+            
+            if (adm == null)
+            {
+                return NotFound(id);
+            }
+
             var oldUser = adm.UserName;
 
             PropertiesComparison.CompareAndForward(adm, adminModel);
@@ -180,10 +196,6 @@ namespace MOJA_ZGRADA.Controllers
                 return NotFound(adminModel);
             }
             u.PasswordHash = _userManager.PasswordHasher.HashPassword(u, adminModel.Password);
-            
-
-            //_userManager.ErrorDescriber.DuplicateEmail
-
             
             try
             {
@@ -206,10 +218,67 @@ namespace MOJA_ZGRADA.Controllers
         }
 
 
+        //DELETE: api/Account/Admin/Delete
+        [HttpDelete]
+        [Authorize(Roles = "SuperAdmin")]
+        [Route("Admin/Delete")]
+        //[ValidateAntiForgeryToken]
+        public async Task<IActionResult> Delete([FromQuery]int id)  //Delete Admin with specific Id
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var Admin = _context.Admins.Find(id);
+
+            if(Admin==null)
+            {
+                return NotFound(id);
+            }
+
+            var Account = await _userManager.FindByNameAsync(Admin.UserName);
+            
+            try
+            {
+                _context.Admins.Remove(Admin);
+                var result = await _userManager.DeleteAsync(Account);
+                _context.SaveChanges();
+                
+                return Ok();
+
+            }
+            catch(Exception ex)
+            {
+                return NotFound(ex);
+            }
+
+        }
+
+        //GET: api/Account/Admin/All
+        [HttpGet]
+        [Authorize(Roles = "SuperAdmin")]
+        [Route("Admin/All")]
+        public List<Admin> AdminAll()  //Return list of all admins from tbl_admin   
+        {
+            var AllAdmins =  _context.Admins.ToList();
+            
+            return AllAdmins;
+        }
+
+        //GET: api/Account/Admin/Get
+        [HttpGet]
+        [Authorize(Roles = "SuperAdmin")]
+        [Route("Admin/Get")]
+        public Admin AdminGet([FromQuery] int Id)   //Return Admin with specific Id
+        {
+            var Admin = _context.Admins.Find(Id);
+            
+            return Admin;
+        }
 
 
-
-        //Only for incode calling [CreateAdmin]
+        //Only for incode calling [AdminCreate]
         public async Task<IActionResult> GetAdmin([FromRoute] string id)
         {
             if (!ModelState.IsValid)

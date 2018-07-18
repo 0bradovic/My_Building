@@ -22,6 +22,9 @@ namespace MOJA_ZGRADA.Model
         
         [StringLength(13, MinimumLength = 13, ErrorMessage = "Must have 13 numbers.")]
         public string JMBG { get; set; }
+
+        [Required]
+        public int Building_Id { get; set; }
         
         public string Address { get; set; }
         

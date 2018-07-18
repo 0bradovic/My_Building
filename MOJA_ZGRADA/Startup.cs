@@ -40,8 +40,6 @@ namespace MOJA_ZGRADA
             
             services.AddScoped<RoleManager<MyRoleManager>>();
 
-            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-
             services.AddIdentity<Account, MyRoleManager>()
                 .AddEntityFrameworkStores<MyDbContext>()
                 .AddDefaultTokenProviders();

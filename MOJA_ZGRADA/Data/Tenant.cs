@@ -13,6 +13,7 @@ namespace MOJA_ZGRADA.Data
     public class Tenant
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         
         public string First_Name { get; set; }
@@ -29,7 +30,10 @@ namespace MOJA_ZGRADA.Data
         
         [StringLength(13, MinimumLength = 13, ErrorMessage = "Must have 13 numbers.")]
         public string JMBG { get; set; }
-        
+
+        [ForeignKey("Building")]
+        public int Building_Id { get; set; }
+
         public string Address { get; set; }
         
         public int Apartment_Number { get; set; }

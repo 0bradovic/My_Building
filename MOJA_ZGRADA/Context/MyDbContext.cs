@@ -39,8 +39,6 @@ namespace MOJA_ZGRADA.Context
 
         public virtual DbSet<Created_Cleaning_Plan> Created_Cleaning_Plans { get; set; }
 
-        public virtual DbSet<Lives_In> Lives_Ins { get; set; }
-
         public virtual DbSet<Message> Messages { get; set; }
 
         public virtual DbSet<Notification> Notifications { get; set; }
@@ -56,14 +54,16 @@ namespace MOJA_ZGRADA.Context
             modelBuilder.Entity<Admin>().HasIndex(adm => adm.Email).IsUnique(true);
 
             modelBuilder.Entity<Admin>().HasIndex(adm => adm.JMBG).IsUnique(true);
+            
 
 
             //Tenant unique collumns
             modelBuilder.Entity<Tenant>().HasIndex(ten => ten.Email).IsUnique(true);
 
             modelBuilder.Entity<Tenant>().HasIndex(ten => ten.JMBG).IsUnique(true);
-            
-            
+
+            modelBuilder.Entity<Tenant>().HasIndex(ten => ten.Building_Id).IsUnique(false);
+
 
             //Building unique collumns
             modelBuilder.Entity<Building>().HasIndex(bld => bld.Address).IsUnique(true);
@@ -75,7 +75,7 @@ namespace MOJA_ZGRADA.Context
             modelBuilder.Entity<Invoice>().HasIndex(inv => inv.Invoice_Amount).IsUnique(true);
             
 
-            //Cleaning_Plan  unique collumns
+            //Cleaning_Plan unique collumns
             modelBuilder.Entity<Cleaning_Plan>().HasIndex(cp => cp.Cleaning_Type).IsUnique(true);
 
             modelBuilder.Entity<Cleaning_Plan>().HasIndex(cp => cp.Cleaning_Price).IsUnique(true);
@@ -88,9 +88,7 @@ namespace MOJA_ZGRADA.Context
 
             modelBuilder.Entity<Handles>().HasKey(han => new { han.Admin_Id, han.Building_Id });
 
-            modelBuilder.Entity<Lives_In>().HasKey(lin => new { lin.Tenant_Id, lin.Building_Id });
-
-
+            modelBuilder.Entity<Tenant>().HasKey(ten => new { ten.Id, ten.Building_Id });
         }
 
     }

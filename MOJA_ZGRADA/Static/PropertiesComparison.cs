@@ -8,7 +8,7 @@ namespace MOJA_ZGRADA.Static
 {
     public static class PropertiesComparison
     {
-        //Template method: insert two classes, add properties from 2nd to 1st if they are not null (skip nulls)
+        //Template method: insert two classes, add properties from 2nd to 1st if they are not null in 2nd class (skip nulls)
         public static void CompareAndForward<TOne, TTwo>(TOne Class1, TTwo Class2) where TOne : class where TTwo : class
         {
             Type typeB = Class1.GetType();

@@ -22,6 +22,9 @@ namespace MOJA_ZGRADA.Data
         
         [Required]
         public string Address { get; set; }
+
+        [ForeignKey("Admin")]
+        public int Admin_Id { get; set; }
         
         public int Number_Of_Apartments { get; set; }
         
