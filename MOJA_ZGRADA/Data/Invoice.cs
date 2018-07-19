@@ -13,11 +13,14 @@ namespace MOJA_ZGRADA.Data
     public class Invoice
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         
         public string Invoice_Type { get; set; }
         
         public double Invoice_Amount { get; set; }
-        
+
+
+        public ICollection<Issued_Invoice> Issued_Invoices { get; set; }
     }
 }

@@ -13,6 +13,7 @@ namespace MOJA_ZGRADA.Data
     public class Post
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
         [ForeignKey("Admin")]
@@ -37,6 +38,11 @@ namespace MOJA_ZGRADA.Data
         public string Text { get; set; }
 
         public string File_URL { get; set; }
+
+
+        public Admin Admin { get; set; }
+
+        public Building Building { get; set; }
 
     }
 }

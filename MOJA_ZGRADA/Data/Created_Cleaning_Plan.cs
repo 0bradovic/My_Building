@@ -26,6 +26,13 @@ namespace MOJA_ZGRADA.Data
         
         [DataType(DataType.Date)]
         public DateTime Cleaning_DateTime { get; set; }
+
+
+        public Cleaning_Plan Cleaning_Plan { get; set; }
+
+        public Building Building { get; set; }
+
+        public Admin Admin { get; set; }
         
     }
 }

@@ -27,5 +27,14 @@ namespace MOJA_ZGRADA.Data
         [DataType(DataType.Date)]
         public DateTime Invoice_Creation_DateTime { get; set; }
 
+
+
+        public Invoice Invoice { get; set; }
+
+        public Tenant Tenant { get; set; }
+
+        public Admin Admin { get; set; }
+
+        public Building Building { get; set; }
     }
 }

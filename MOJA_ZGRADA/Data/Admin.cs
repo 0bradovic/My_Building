@@ -13,6 +13,7 @@ namespace MOJA_ZGRADA.Data
     public class Admin
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         
         public string First_Name { get; set; }
@@ -32,6 +33,18 @@ namespace MOJA_ZGRADA.Data
         public string Address { get; set; }
         
         public string UserName { get; set; }
+
+
+        public ICollection<Handles> Handleses { get; set; }
+
+        public ICollection<Created_Cleaning_Plan> Created_Cleaning_Plans { get; set; }
+
+        public ICollection<Issued_Invoice> Issued_Invoices { get; set; }
+
+        public ICollection<Message> Messages { get; set; }
+
+        public ICollection<Post> Posts { get; set; }
+
 
     }
 }

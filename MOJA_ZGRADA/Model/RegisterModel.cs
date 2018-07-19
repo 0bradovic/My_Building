@@ -30,5 +30,7 @@ namespace MOJA_ZGRADA.Model
         public int Number_Of_Floors { get; set; }
 
         public bool Special_Apartments_Annotation { get; set; } = false;
+
+        public int Admin_Id { get; set; }
     }
 }

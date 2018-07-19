@@ -25,7 +25,7 @@ namespace MOJA_ZGRADA.Controllers
         private readonly MyDbContext _context;
         private UserManager<Account> _userManager;
 
-        //Ne menjati redosled parametara niti dodavati argumente u LoginController metodi
+        //Ne menjati redosled parametara, niti dodavati argumente u LoginController metodi
 
         public LoginController(UserManager<Account> userManager)
         {

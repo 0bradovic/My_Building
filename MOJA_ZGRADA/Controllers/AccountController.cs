@@ -157,8 +157,7 @@ namespace MOJA_ZGRADA.Controllers
                 return NotFound(ex);
             }
         }
-
-
+        
         //PUT: api/Account/Admin/Update/Account
         [HttpPut]
         [Authorize(Roles = "SuperAdmin")]
@@ -216,14 +215,13 @@ namespace MOJA_ZGRADA.Controllers
                 return NotFound(ex);
             }
         }
-
-
+        
         //DELETE: api/Account/Admin/Delete
         [HttpDelete]
         [Authorize(Roles = "SuperAdmin")]
         [Route("Admin/Delete")]
         //[ValidateAntiForgeryToken]
-        public async Task<IActionResult> Delete([FromQuery]int id)  //Delete Admin with specific Id
+        public async Task<IActionResult> AdminDelete([FromQuery]int id)  //Delete Admin with specific Id
         {
             if (!ModelState.IsValid)
             {

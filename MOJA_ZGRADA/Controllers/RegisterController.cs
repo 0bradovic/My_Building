@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Mvc;
 using MOJA_ZGRADA.Context;
 using MOJA_ZGRADA.Data;
 using MOJA_ZGRADA.Model;
-using System.Linq;
 using Microsoft.EntityFrameworkCore;
 
 namespace MOJA_ZGRADA.Controllers
@@ -68,23 +67,30 @@ namespace MOJA_ZGRADA.Controllers
                 Number_Of_Floors = registerModel.Number_Of_Floors,
                 Special_Apartments_Annotation = registerModel.Special_Apartments_Annotation
             };
-            
+
 
             try
             {
-                _context.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
+                //check if building with inserted address already exist
+                var check = _context.Buildings.Where(chk => chk.Address == registerModel.Address).SingleOrDefault();
+                if (check == null)
+                {
+                    var error = $"Building with address " + registerModel.Address + " already exist";
+                    return NotFound(new { error });
+                }
+
 
                 //New Building entity
                 CreatedAtAction("GetBuilding", new { id = registerModel.Address }, building);
                 _context.Buildings.Add(building);
                 await _context.SaveChangesAsync();
 
-                var Building_Id =  _context.Buildings.Where(b => b.Address == registerModel.Address).Select(i => i.Id).FirstOrDefault();
+                var Building_Id = _context.Buildings.Where(b => b.Address == registerModel.Address).Select(i => i.Id).FirstOrDefault();
 
 
                 for (int i = 1; i <= registerModel.Number_Of_Apartments; i++)
                 {
-                    //UserName template: Address+Stan+brStana
+                    //UserName template: Address+Stan+BrStana
                     //Password template: Address+Stan+BrStana+#
                     var meta_User_Name = registerModel.Address + "Stan" + i;
                     var Array = meta_User_Name.Split(" ");
@@ -114,12 +120,21 @@ namespace MOJA_ZGRADA.Controllers
 
                     //new tenant
                     CreatedAtAction("GetTenant", new { id = tenant.UserName }, tenant);
-                    
+
                     _context.Tenants.Add(tenant);
 
                     await _userManager.AddToRoleAsync(user, "Tenant");
                 }
-                
+
+                //New Handles entity
+                var handles = new Handles
+                {
+                    Building_Id = building.Id,
+                    Admin_Id = registerModel.Admin_Id
+                };
+                _context.Handleses.Add(handles);
+                await _context.SaveChangesAsync();
+
                 return Ok(building);
 
             }
@@ -143,7 +158,7 @@ namespace MOJA_ZGRADA.Controllers
 
             var building = _context.Buildings.Where(b => b.Address == tenantModel.Address).Select(i => i.Id).FirstOrDefault();
 
-            if(building==0)
+            if (building == 0)
             {
                 return NotFound(tenantModel.Address);
             }
@@ -153,7 +168,7 @@ namespace MOJA_ZGRADA.Controllers
                 //get number of last apartment
                 int maxApartmentNumber = _context.Buildings.Where(t => t.Address == tenantModel.Address).Select(i => i.Number_Of_Apartments).DefaultIfEmpty(0).Max();
 
-                //UserName template: Address+Stan+brStana
+                //UserName template: Address+Stan+BrStana
                 //Password template: Address+Stan+BrStana+#
                 var meta_User_Name = tenantModel.Address + "Stan" + (maxApartmentNumber + 1).ToString();
                 var Array = meta_User_Name.Split(" ");
@@ -183,7 +198,6 @@ namespace MOJA_ZGRADA.Controllers
                     UserName = User_Name,
                     First_Name = tenantModel.First_Name,
                     Last_Name = tenantModel.Last_Name,
-                    //Address = tenantModel.Address,
                     Email = tenantModel.Email,
 
                     Date_Of_Birth = tenantModel.Date_Of_Birth,
@@ -206,30 +220,97 @@ namespace MOJA_ZGRADA.Controllers
                 var apartmentIncrement = _context.Buildings.SingleOrDefault(b => b.Id == building);
                 if (result != null)
                 {
-                    apartmentIncrement.Number_Of_Apartments = maxApartmentNumber+1;
+                    apartmentIncrement.Number_Of_Apartments = maxApartmentNumber + 1;
                     _context.SaveChanges();
                 }
 
                 return Ok(tenant);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return NotFound(ex);
             }
         }
 
-        ////POST: api/Register/NewBuilding
-        //[HttpPost]
+        //POST: api/Register/NewBuilding
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        [Route("Building/New")]
+        public async Task<IActionResult> NewBuilding([FromBody] RegisterModel registerModel)    //For adding a new building *PROBLEM: NE VRACA NISTA U POSTMAN?!*
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var building = new Building
+            {
+                Nickname = registerModel.Nickname,
+                Date_Of_Creation = registerModel.Date_Of_Creation,
+                Address = registerModel.Address,
+                Number_Of_Apartments = registerModel.Number_Of_Apartments,
+                Number_Of_Tenants = registerModel.Number_Of_Tenants,
+                Number_Of_Parking_Places = registerModel.Number_Of_Parking_Places,
+                Number_Of_Basements = registerModel.Number_Of_Basements,
+                Number_Of_Entrances = registerModel.Number_Of_Entrances,
+                Number_Of_Floors = registerModel.Number_Of_Floors,
+                Special_Apartments_Annotation = registerModel.Special_Apartments_Annotation
+            };
+
+            try
+            {
+                //check if building with inserted address already exist
+                var check = _context.Buildings.Where(chk => chk.Address == registerModel.Address).SingleOrDefault();
+                if (check != null)
+                {
+                    var error = $"Building with address " + registerModel.Address + " already exist";
+                    return NotFound(new { error });
+                }
+
+
+                //New Building entity
+                CreatedAtAction("GetBuilding", new { id = registerModel.Address }, building);
+                _context.Buildings.Add(building);
+
+                var bld = building; //dodatna var, samo za proveru
+
+                //New Handles entity
+                var handles = new Handles
+                {
+                    Building_Id = building.Id,
+                    Admin_Id = registerModel.Admin_Id,
+                    Admin = GetAdmin(registerModel.Admin_Id),
+                    Building = building
+                };
+                _context.Handleses.Add(handles);
+                await _context.SaveChangesAsync();
+
+                
+
+                return Ok(bld); //***NE VRACA NISTA U POSTMAN!?***
+            }
+            catch (Exception ex)
+            {
+                return NotFound(new { ex.InnerException.Message });
+            }
+        }
+
+        ////DELETE: api/Register/Tenant/Delete
+        //[HttpDelete]
         //[Authorize(Roles = "Admin")]
-        //[Route("Building/New")]
-        //public async Task<IActionResult> NewBuilding([FromBody] )
+        //[Route("Tenant/Delete")]
+        ////[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> TenantDelete([FromQuery]int id)
+        //{
+
+        //}
 
 
 
 
 
 
-        //Only for incode calling [PostAsync]
+        //Only for incode calling [Initial]
         public async Task<IActionResult> GetBuilding([FromRoute] string id)
         {
             if (!ModelState.IsValid)
@@ -247,7 +328,7 @@ namespace MOJA_ZGRADA.Controllers
             return Ok(Building);
         }
 
-        //Only for incode calling [PostAsync]
+        //Only for incode calling [Initial]
         public async Task<IActionResult> GetTenant([FromRoute] string id)
         {
             if (!ModelState.IsValid)
@@ -265,6 +346,14 @@ namespace MOJA_ZGRADA.Controllers
             return Ok(Tenant);
         }
 
+        //Only for incode calling [NewBuilding], [Initial]
+        public Admin GetAdmin(int id)
+        {
+            var Admin =  _context.Admins.Find(id);
+            
+            return Admin;
+
+        }
     }
 }
 

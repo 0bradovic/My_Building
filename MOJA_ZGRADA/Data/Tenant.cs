@@ -33,8 +33,6 @@ namespace MOJA_ZGRADA.Data
 
         [ForeignKey("Building")]
         public int Building_Id { get; set; }
-
-        public string Address { get; set; }
         
         public int Apartment_Number { get; set; }
 
@@ -45,6 +43,11 @@ namespace MOJA_ZGRADA.Data
         public int Number_Of_Occupants { get; set; }
         
         public string UserName { get; set; }
+
+
+        public ICollection<Issued_Invoice> Issued_Invoices { get; set; }
+
+        public ICollection<Message> Messages { get; set; }
 
     }
 }

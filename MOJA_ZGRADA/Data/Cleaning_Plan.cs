@@ -13,11 +13,15 @@ namespace MOJA_ZGRADA.Data
     public class Cleaning_Plan
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         
         public string Cleaning_Type { get; set; }
         
         public double Cleaning_Price { get; set; }
+
+
+        public ICollection<Created_Cleaning_Plan> Created_Cleaning_Plans { get; set; }
 
     }
 }
