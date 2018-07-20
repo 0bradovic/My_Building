@@ -67,6 +67,8 @@ namespace MOJA_ZGRADA.Context
 
             modelBuilder.Entity<Tenant>().HasIndex(ten => ten.UserName).IsUnique(true);
 
+            modelBuilder.Entity<Tenant>().HasIndex(ten => new { ten.Id, ten.Building_Id }).IsUnique(true);
+
 
             //Building unique collumns
             modelBuilder.Entity<Building>().HasIndex(bld => bld.Address).IsUnique(true);

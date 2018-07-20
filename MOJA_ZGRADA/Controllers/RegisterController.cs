@@ -47,7 +47,7 @@ namespace MOJA_ZGRADA.Controllers
         [HttpPost]
         [Authorize(Roles = "Admin")]
         [Route("Initial")]
-        public async Task<IActionResult> Initial([FromBody] RegisterModel registerModel)  //Admin's initial registration of building + tenants
+        public async Task<IActionResult> Initial([FromBody] RegisterModel registerModel)  //Admin's initial registration of building + tenants *PROBLEM: NE VRACA NISTA U POSTMAN?!*
         {
             if (!ModelState.IsValid)
             {
@@ -73,7 +73,7 @@ namespace MOJA_ZGRADA.Controllers
             {
                 //check if building with inserted address already exist
                 var check = _context.Buildings.Where(chk => chk.Address == registerModel.Address).SingleOrDefault();
-                if (check == null)
+                if (check != null)
                 {
                     var error = $"Building with address " + registerModel.Address + " already exist";
                     return NotFound(new { error });
@@ -130,12 +130,14 @@ namespace MOJA_ZGRADA.Controllers
                 var handles = new Handles
                 {
                     Building_Id = building.Id,
-                    Admin_Id = registerModel.Admin_Id
+                    Admin_Id = registerModel.Admin_Id,
+                    Admin = GetAdmin(registerModel.Admin_Id),
+                    Building = building
                 };
                 _context.Handleses.Add(handles);
                 await _context.SaveChangesAsync();
 
-                return Ok(building);
+                return Ok(building);  //***NE VRACA NISTA U POSTMAN!?***
 
             }
             catch (Exception ex)
@@ -272,8 +274,6 @@ namespace MOJA_ZGRADA.Controllers
                 CreatedAtAction("GetBuilding", new { id = registerModel.Address }, building);
                 _context.Buildings.Add(building);
 
-                var bld = building; //dodatna var, samo za proveru
-
                 //New Handles entity
                 var handles = new Handles
                 {
@@ -285,9 +285,9 @@ namespace MOJA_ZGRADA.Controllers
                 _context.Handleses.Add(handles);
                 await _context.SaveChangesAsync();
 
-                
 
-                return Ok(bld); //***NE VRACA NISTA U POSTMAN!?***
+
+                return Ok(building); //***NE VRACA NISTA U POSTMAN!?***
             }
             catch (Exception ex)
             {
@@ -295,22 +295,79 @@ namespace MOJA_ZGRADA.Controllers
             }
         }
 
-        ////DELETE: api/Register/Tenant/Delete
-        //[HttpDelete]
-        //[Authorize(Roles = "Admin")]
-        //[Route("Tenant/Delete")]
-        ////[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> TenantDelete([FromQuery]int id)
-        //{
+        //DELETE: api/Register/Tenant/Delete/Id
+        [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
+        [Route("Tenant/Delete/{id}")]
+        //[ValidateAntiForgeryToken]
+        public async Task<IActionResult> TenantDelete([FromRoute]int id)    //Delete Tenant with specific Id
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
 
-        //}
+            var Tenant = _context.Tenants.Find(id);
+
+            if (Tenant == null)
+            {
+                return NotFound(id);
+            }
+
+            var Account = await _userManager.FindByNameAsync(Tenant.UserName);
+
+            try
+            {
+                _context.Tenants.Remove(Tenant);
+                var result = await _userManager.DeleteAsync(Account);
+                _context.SaveChanges();
+
+                return Ok();
+
+            }
+            catch (Exception ex)
+            {
+                return NotFound(ex);
+            }
+        }
+
+        //DELETE: api/Register/Building/Delete/Id
+        [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
+        [Route("Building/Delete/{id}")]
+        //[ValidateAntiForgeryToken]
+        public async Task<IActionResult> BuildingDelete([FromRoute]int id)  //Delete Building with specific Id *PREMESTITI U BUILDING CONTROLLER*
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var Building = _context.Buildings.Find(id);
+
+            if (Building == null)
+            {
+                return NotFound(id);
+            }
+            
+            try
+            {
+                _context.Buildings.Remove(Building);
+                await _context.SaveChangesAsync();
+
+                return Ok();
+
+            }
+            catch (Exception ex)
+            {
+                return NotFound(ex);
+            }
+        }
 
 
 
 
-
-
-        //Only for incode calling [Initial]
+        //Only for incode calling
         public async Task<IActionResult> GetBuilding([FromRoute] string id)
         {
             if (!ModelState.IsValid)
@@ -328,7 +385,7 @@ namespace MOJA_ZGRADA.Controllers
             return Ok(Building);
         }
 
-        //Only for incode calling [Initial]
+        //Only for incode calling
         public async Task<IActionResult> GetTenant([FromRoute] string id)
         {
             if (!ModelState.IsValid)
@@ -346,7 +403,7 @@ namespace MOJA_ZGRADA.Controllers
             return Ok(Tenant);
         }
 
-        //Only for incode calling [NewBuilding], [Initial]
+        //Only for incode calling
         public Admin GetAdmin(int id)
         {
             var Admin =  _context.Admins.Find(id);

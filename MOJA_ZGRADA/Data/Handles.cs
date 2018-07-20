@@ -19,8 +19,8 @@ namespace MOJA_ZGRADA.Data
         public int Building_Id { get; set; }
         
 
-        public Admin Admin { get; set; }
+        public virtual Admin Admin { get; set; }
 
-        public Building Building { get; set; }
+        public virtual Building Building { get; set; }
     }
 }

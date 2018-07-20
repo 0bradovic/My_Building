@@ -25,6 +25,10 @@ namespace MOJA_ZGRADA.Data
         public string Post_Name { get; set; }
         
         public string Post_Priority { get; set; }
+
+        public int Post_Number_Of_Views { get; set; }
+
+        public bool Post_Pinned { get; set; } = false;
         
         [DataType(DataType.Date)]
         public DateTime Post_Creation_DateTime { get; set; }
@@ -40,9 +44,9 @@ namespace MOJA_ZGRADA.Data
         public string File_URL { get; set; }
 
 
-        public Admin Admin { get; set; }
+        public virtual Admin Admin { get; set; }
 
-        public Building Building { get; set; }
+        public virtual Building Building { get; set; }
 
     }
 }

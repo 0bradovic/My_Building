@@ -39,13 +39,13 @@ namespace MOJA_ZGRADA.Data
         public bool Special_Apartments_Annotation { get; set; } = false;
 
 
-        public ICollection<Handles> Handleses { get; set; }
+        public virtual ICollection<Handles> Handleses { get; set; }
 
-        public ICollection<Created_Cleaning_Plan> Created_Cleaning_Plans { get; set; }
+        public virtual ICollection<Created_Cleaning_Plan> Created_Cleaning_Plans { get; set; }
 
-        public ICollection<Issued_Invoice> Issued_Invoices { get; set; }
+        public virtual ICollection<Issued_Invoice> Issued_Invoices { get; set; }
 
-        public ICollection<Post> Posts { get; set; }
+        public virtual ICollection<Post> Posts { get; set; }
 
     }
 }

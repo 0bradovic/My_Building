@@ -21,6 +21,6 @@ namespace MOJA_ZGRADA.Data
         public double Invoice_Amount { get; set; }
 
 
-        public ICollection<Issued_Invoice> Issued_Invoices { get; set; }
+        public virtual ICollection<Issued_Invoice> Issued_Invoices { get; set; }
     }
 }

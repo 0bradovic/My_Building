@@ -27,9 +27,9 @@ namespace MOJA_ZGRADA.Data
         public string File_URL { get; set; }
 
 
-        public Admin Admin { get; set; }
+        public virtual Admin Admin { get; set; }
 
-        public Tenant Tenant { get; set; }
+        public virtual Tenant Tenant { get; set; }
 
     }
 }

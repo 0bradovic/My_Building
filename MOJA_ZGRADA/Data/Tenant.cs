@@ -45,9 +45,9 @@ namespace MOJA_ZGRADA.Data
         public string UserName { get; set; }
 
 
-        public ICollection<Issued_Invoice> Issued_Invoices { get; set; }
+        public virtual ICollection<Issued_Invoice> Issued_Invoices { get; set; }
 
-        public ICollection<Message> Messages { get; set; }
+        public virtual ICollection<Message> Messages { get; set; }
 
     }
 }

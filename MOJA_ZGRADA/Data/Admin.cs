@@ -35,15 +35,15 @@ namespace MOJA_ZGRADA.Data
         public string UserName { get; set; }
 
 
-        public ICollection<Handles> Handleses { get; set; }
+        public virtual ICollection<Handles> Handleses { get; set; }
 
-        public ICollection<Created_Cleaning_Plan> Created_Cleaning_Plans { get; set; }
+        public virtual ICollection<Created_Cleaning_Plan> Created_Cleaning_Plans { get; set; }
 
-        public ICollection<Issued_Invoice> Issued_Invoices { get; set; }
+        public virtual ICollection<Issued_Invoice> Issued_Invoices { get; set; }
 
-        public ICollection<Message> Messages { get; set; }
+        public virtual ICollection<Message> Messages { get; set; }
 
-        public ICollection<Post> Posts { get; set; }
+        public virtual ICollection<Post> Posts { get; set; }
 
 
     }

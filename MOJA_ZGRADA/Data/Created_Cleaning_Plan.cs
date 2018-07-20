@@ -28,11 +28,11 @@ namespace MOJA_ZGRADA.Data
         public DateTime Cleaning_DateTime { get; set; }
 
 
-        public Cleaning_Plan Cleaning_Plan { get; set; }
+        public virtual Cleaning_Plan Cleaning_Plan { get; set; }
 
-        public Building Building { get; set; }
+        public virtual Building Building { get; set; }
 
-        public Admin Admin { get; set; }
+        public virtual Admin Admin { get; set; }
         
     }
 }

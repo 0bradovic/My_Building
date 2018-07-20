@@ -21,7 +21,7 @@ namespace MOJA_ZGRADA.Data
         public double Cleaning_Price { get; set; }
 
 
-        public ICollection<Created_Cleaning_Plan> Created_Cleaning_Plans { get; set; }
+        public virtual ICollection<Created_Cleaning_Plan> Created_Cleaning_Plans { get; set; }
 
     }
 }

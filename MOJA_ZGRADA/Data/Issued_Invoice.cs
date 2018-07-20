@@ -29,12 +29,12 @@ namespace MOJA_ZGRADA.Data
 
 
 
-        public Invoice Invoice { get; set; }
+        public virtual Invoice Invoice { get; set; }
 
-        public Tenant Tenant { get; set; }
+        public virtual Tenant Tenant { get; set; }
 
-        public Admin Admin { get; set; }
+        public virtual Admin Admin { get; set; }
 
-        public Building Building { get; set; }
+        public virtual Building Building { get; set; }
     }
 }
