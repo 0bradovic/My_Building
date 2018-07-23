@@ -6,6 +6,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations.Operations;
 using System.ComponentModel.DataAnnotations;
+using Newtonsoft.Json;
 
 namespace MOJA_ZGRADA.Data
 {
@@ -21,6 +22,8 @@ namespace MOJA_ZGRADA.Data
         public double Invoice_Amount { get; set; }
 
 
+
+        [JsonIgnore]
         public virtual ICollection<Issued_Invoice> Issued_Invoices { get; set; }
     }
 }

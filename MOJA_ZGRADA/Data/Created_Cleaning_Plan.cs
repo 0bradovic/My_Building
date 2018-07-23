@@ -6,6 +6,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations.Operations;
 using System.ComponentModel.DataAnnotations;
+using Newtonsoft.Json;
 
 namespace MOJA_ZGRADA.Data
 {
@@ -28,10 +29,14 @@ namespace MOJA_ZGRADA.Data
         public DateTime Cleaning_DateTime { get; set; }
 
 
+
+        [JsonIgnore]
         public virtual Cleaning_Plan Cleaning_Plan { get; set; }
 
+        [JsonIgnore]
         public virtual Building Building { get; set; }
 
+        [JsonIgnore]
         public virtual Admin Admin { get; set; }
         
     }

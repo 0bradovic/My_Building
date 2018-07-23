@@ -6,6 +6,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations.Operations;
 using System.ComponentModel.DataAnnotations;
+using Newtonsoft.Json;
 
 namespace MOJA_ZGRADA.Data
 {
@@ -39,12 +40,17 @@ namespace MOJA_ZGRADA.Data
         public bool Special_Apartments_Annotation { get; set; } = false;
 
 
+
+        [JsonIgnore]
         public virtual ICollection<Handles> Handleses { get; set; }
 
+        [JsonIgnore]
         public virtual ICollection<Created_Cleaning_Plan> Created_Cleaning_Plans { get; set; }
 
+        [JsonIgnore]
         public virtual ICollection<Issued_Invoice> Issued_Invoices { get; set; }
 
+        [JsonIgnore]
         public virtual ICollection<Post> Posts { get; set; }
 
     }

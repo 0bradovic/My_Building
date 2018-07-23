@@ -6,6 +6,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations.Operations;
 using System.ComponentModel.DataAnnotations;
+using Newtonsoft.Json;
 
 namespace MOJA_ZGRADA.Data
 {
@@ -21,6 +22,8 @@ namespace MOJA_ZGRADA.Data
         public double Cleaning_Price { get; set; }
 
 
+
+        [JsonIgnore]
         public virtual ICollection<Created_Cleaning_Plan> Created_Cleaning_Plans { get; set; }
 
     }

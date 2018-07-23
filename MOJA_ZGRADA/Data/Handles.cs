@@ -6,6 +6,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations.Operations;
 using System.ComponentModel.DataAnnotations;
+using Newtonsoft.Json;
 
 namespace MOJA_ZGRADA.Data
 {
@@ -17,10 +18,13 @@ namespace MOJA_ZGRADA.Data
 
         [ForeignKey("Building")]
         public int Building_Id { get; set; }
-        
 
+
+
+        [JsonIgnore]
         public virtual Admin Admin { get; set; }
 
+        [JsonIgnore]
         public virtual Building Building { get; set; }
     }
 }
