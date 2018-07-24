@@ -46,6 +46,8 @@ namespace MOJA_ZGRADA.Data
 
         public string Post_PDF_URL { get; set; }
 
+        public string Post_PDF_FileName { get; set; }
+
         public string Post_Picture_URL { get; set; }
 
         public string Post_Picture_FileName { get; set; }

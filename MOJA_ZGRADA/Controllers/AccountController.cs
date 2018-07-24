@@ -117,28 +117,12 @@ namespace MOJA_ZGRADA.Controllers
             var oldUser = adm.UserName;
 
             PropertiesComparison.CompareAndForward(adm, adminModel);
-            //adm.First_Name = adminModel.First_Name;
-            //adm.Last_Name = adminModel.Last_Name;
-            //adm.Email = adminModel.Email;
-            //adm.Date_Of_Birth = adminModel.Date_Of_Birth;
-            //adm.PhoneNumber = adminModel.PhoneNumber;
-            //adm.JMBG = adminModel.JMBG;
-            //adm.Address = adminModel.Address;
-
-
+            
             //Update AspNetUsers
             Account u = _userManager.FindByNameAsync(oldUser).Result;
-
-
+            
             PropertiesComparison.CompareAndForward(u, adminModel);
-            //u.First_Name = adminModel.First_Name;
-            //u.Last_Name = adminModel.Last_Name;
-            //u.Email = adminModel.Email;
-
-
-
-            //_userManager.ErrorDescriber.DuplicateEmail
-
+            
             try
             {
                 //Execute updates
@@ -182,13 +166,11 @@ namespace MOJA_ZGRADA.Controllers
             var oldUser = adm.UserName;
 
             PropertiesComparison.CompareAndForward(adm, adminModel);
-            //adm.UserName = adminModel.UserName;
 
 
             //Update AspNetUsers
             Account u = _userManager.FindByNameAsync(oldUser).Result;
             PropertiesComparison.CompareAndForward(u, adminModel);
-            //u.UserName = adminModel.UserName;
 
             if (u == null)
             {

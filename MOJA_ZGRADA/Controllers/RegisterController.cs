@@ -28,21 +28,7 @@ namespace MOJA_ZGRADA.Controllers
             _roleManager = roleManager;
         }
 
-
-        // GET: api/Register
-        [HttpGet]
-        public IEnumerable<string> Get()
-        {
-            return new string[] { "value1", "value2" };
-        }
-
-        // GET: api/Register/5
-        [HttpGet("{id}", Name = "Get")]
-        public string Get(int id)
-        {
-            return "value";
-        }
-
+        
         //POST: api/Register/Initial
         [HttpPost]
         [Authorize(Roles = "Admin")]
@@ -131,8 +117,8 @@ namespace MOJA_ZGRADA.Controllers
                 {
                     Building_Id = building.Id,
                     Admin_Id = registerModel.Admin_Id,
-                    Admin = GetAdmin(registerModel.Admin_Id),
-                    Building = building
+                    //Admin = GetAdmin(registerModel.Admin_Id),
+                    //Building = building
                 };
                 _context.Handleses.Add(handles);
                 await _context.SaveChangesAsync();

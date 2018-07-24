@@ -90,6 +90,8 @@ namespace MOJA_ZGRADA.Controllers
 
             PropertiesComparison.CompareAndForward(Post, postModel);
 
+            Post.Post_Update_DateTime = DateTime.Now;
+
             _context.Entry(Post).State = EntityState.Modified;
 
             try
@@ -119,17 +121,16 @@ namespace MOJA_ZGRADA.Controllers
             {
                 return BadRequest(ModelState);
             }
-            
+
+            post.Post_Creation_DateTime = DateTime.Now;
+
             try
             {
+                //Image
                 post.Post_Image = Request.Form.Files[0];
-
                 var Image = Path.Combine(_hostingEnvironment.WebRootPath, "Images");
-                
                 string extension = Path.GetExtension(post.Post_Picture_URL);
-
                 var filePath = Path.Combine(Image, DateTime.Now.ToString("yymmssfff") + extension);
-
                 var fileName = DateTime.Now.ToString("yymmssfff") + extension;
 
                 post.Post_Picture_FileName = fileName;
@@ -139,8 +140,26 @@ namespace MOJA_ZGRADA.Controllers
                 {
                     await post.Post_Image.CopyToAsync(stream);
                 }
+
+
+                //Pdf
+                post.Post_PDF = Request.Form.Files[1];
+                var Pdf = Path.Combine(_hostingEnvironment.WebRootPath, "PDFs");
+                string extension2 = Path.GetExtension(post.Post_PDF_URL);
+                var filePath2 = Path.Combine(Pdf, DateTime.Now.ToString("yymmssfff") + extension2);
+                var fileName2 = DateTime.Now.ToString("yymmssfff") + extension;
+
+                post.Post_PDF_FileName = fileName2;
+                post.Post_PDF_URL = filePath2;
+
+                using (var stream = new FileStream(filePath2, FileMode.Create))
+                {
+                    await post.Post_PDF.CopyToAsync(stream);
+                }
+
                 
 
+                //Update db
                 _context.Posts.Add(post);
                 await _context.SaveChangesAsync();
 

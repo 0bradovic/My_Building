@@ -136,7 +136,7 @@ namespace MOJA_ZGRADA.Controllers
         [HttpPost("{buildingId}")]
         [Authorize(Roles = "SuperAdmin, Admin")]
         [Route("Assign/{buildingId}")]
-        public async Task<IActionResult> AssignBuilding([FromRoute] int buildingId, [FromBody] int adminId) //Assign admin for building handling *PROBLEM: NE VRACA NISTA U POSTMAN?!*
+        public async Task<IActionResult> AssignBuilding([FromRoute] int buildingId, [FromBody] int adminId) //Assign admin for building handling
         {
             if (!ModelState.IsValid)
             {
@@ -156,7 +156,7 @@ namespace MOJA_ZGRADA.Controllers
                 _context.Handleses.Add(handles);
                 await _context.SaveChangesAsync();
 
-                return Ok(handles); //***NE VRACA NISTA U POSTMAN!?***
+                return Ok(handles);
             }
             catch(Exception ex)
             {

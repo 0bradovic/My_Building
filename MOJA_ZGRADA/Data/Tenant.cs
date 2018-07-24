@@ -45,7 +45,8 @@ namespace MOJA_ZGRADA.Data
         
         public string UserName { get; set; }
 
-
+        public int Quadrature { get; set; }
+        
 
         [JsonIgnore]
         public virtual ICollection<Issued_Invoice> Issued_Invoices { get; set; }

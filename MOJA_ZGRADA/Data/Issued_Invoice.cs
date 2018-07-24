@@ -18,13 +18,14 @@ namespace MOJA_ZGRADA.Data
 
         [ForeignKey("Tenant")]
         public int Tenant_Id { get; set; }
-
-        [ForeignKey("Admin")]
-        public int Admin_Id { get; set; }
-
-        [ForeignKey("Building")]
-        public int Building_Id { get; set; }
         
+        [Required]
+        public double Issued_Invoice_Amount { get; set; }
+        
+        [Required]
+        [DataType(DataType.Date)]
+        public DateTime Invoice_DateTime { get; set; }
+
         [DataType(DataType.Date)]
         public DateTime Invoice_Creation_DateTime { get; set; }
 
@@ -35,11 +36,6 @@ namespace MOJA_ZGRADA.Data
 
         [JsonIgnore]
         public virtual Tenant Tenant { get; set; }
-
-        [JsonIgnore]
-        public virtual Admin Admin { get; set; }
-
-        [JsonIgnore]
-        public virtual Building Building { get; set; }
+        
     }
 }

@@ -39,6 +39,8 @@ namespace MOJA_ZGRADA.Data
         
         public bool Special_Apartments_Annotation { get; set; } = false;
 
+        //eventulno dodati kvadraturu svih stana
+
 
 
         [JsonIgnore]
@@ -48,10 +50,10 @@ namespace MOJA_ZGRADA.Data
         public virtual ICollection<Created_Cleaning_Plan> Created_Cleaning_Plans { get; set; }
 
         [JsonIgnore]
-        public virtual ICollection<Issued_Invoice> Issued_Invoices { get; set; }
-
+        public virtual ICollection<Invoice> Invoices { get; set; }
+        
         [JsonIgnore]
         public virtual ICollection<Post> Posts { get; set; }
-
+        
     }
 }
