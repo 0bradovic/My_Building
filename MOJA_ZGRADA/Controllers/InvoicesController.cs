@@ -98,11 +98,16 @@ namespace MOJA_ZGRADA.Controllers
                 var error = @"Invoice with this Name already exist!";
                 return NotFound(new { error });
             }
-            if(invoice.Building_Id==0)
+            if(invoice.Admin_Id==0)
             {
-                var error = @"Building Id must be inserted!";
+                var error = @"Admin Id must be inserted!";
                 return NotFound(new { error });
             }
+
+
+
+
+
 
             _context.Invoices.Add(invoice);
             await _context.SaveChangesAsync();

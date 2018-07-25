@@ -1,17 +1,15 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
-using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Migrations.Operations;
-using System.ComponentModel.DataAnnotations;
-using Newtonsoft.Json;
 
 namespace MOJA_ZGRADA.Data
 {
-    [Table("tbl_Issued_Invoice")]
-    public class Issued_Invoice
+    [Table("tbl_IssuedInvoiceTenant")]
+    public class IssuedInvoiceTenant
     {
 
         [ForeignKey("Invoice")]
@@ -32,9 +30,10 @@ namespace MOJA_ZGRADA.Data
 
         [DataType(DataType.Date)]
         public DateTime Issued_Invoice_Creation_DateTime { get; set; }
-        
+
         [Required]
         public string Issued_Invoice_Name { get; set; }
+
 
 
         [JsonIgnore]
@@ -42,6 +41,5 @@ namespace MOJA_ZGRADA.Data
 
         [JsonIgnore]
         public virtual Tenant Tenant { get; set; }
-        
     }
 }

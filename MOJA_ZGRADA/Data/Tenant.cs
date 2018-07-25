@@ -47,12 +47,15 @@ namespace MOJA_ZGRADA.Data
 
         public int Quadrature { get; set; }
         
+        
 
+        [JsonIgnore]
+        public virtual ICollection<Message> Messages { get; set; }
+        
         [JsonIgnore]
         public virtual ICollection<Issued_Invoice> Issued_Invoices { get; set; }
 
         [JsonIgnore]
-        public virtual ICollection<Message> Messages { get; set; }
-
+        public virtual ICollection<IssuedInvoiceTenant> IssuedInvoiceTenants { get; set; }
     }
 }

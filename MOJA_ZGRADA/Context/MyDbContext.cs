@@ -36,6 +36,8 @@ namespace MOJA_ZGRADA.Context
 
         public virtual DbSet<Issued_Invoice> Issued_Invoices { get; set; }
 
+        public virtual DbSet<IssuedInvoiceTenant> IssuedInvoiceTenants { get; set; }
+
         public virtual DbSet<Created_Cleaning_Plan> Created_Cleaning_Plans { get; set; }
 
         public virtual DbSet<Message> Messages { get; set; }
@@ -87,7 +89,9 @@ namespace MOJA_ZGRADA.Context
             #region Composite Keys
             modelBuilder.Entity<Created_Cleaning_Plan>().HasKey(ccp => new { ccp.Cleaning_Plan_Id, ccp.Building_Id, ccp.Admin_Id }); //subject of change 3->2
 
-            modelBuilder.Entity<Issued_Invoice>().HasKey(iiv => new { iiv.Invoice_Id, iiv.Tenant_Id});
+            modelBuilder.Entity<Issued_Invoice>().HasKey(iiv => new { iiv.Invoice_Id, iiv.Tenant_Id });
+
+            modelBuilder.Entity<IssuedInvoiceTenant>().HasKey(iiv => new { iiv.Invoice_Id, iiv.Tenant_Id });
 
             modelBuilder.Entity<Handles>().HasKey(han => new { han.Admin_Id, han.Building_Id });
             #endregion
@@ -106,12 +110,17 @@ namespace MOJA_ZGRADA.Context
             modelBuilder.Entity<Created_Cleaning_Plan>().HasOne(ccp => ccp.Admin).WithMany(ccp => ccp.Created_Cleaning_Plans).HasForeignKey(ccp => ccp.Admin_Id);
 
             //Invoice
-            modelBuilder.Entity<Invoice>().HasOne(ii => ii.Building).WithMany(ii => ii.Invoices).HasForeignKey(ii => ii.Building_Id).OnDelete(DeleteBehavior.Restrict); 
+            modelBuilder.Entity<Invoice>().HasOne(ii => ii.Admin).WithMany(ii => ii.Invoices).HasForeignKey(ii => ii.Admin_Id).OnDelete(DeleteBehavior.Restrict); 
 
             //Issued_Invoice
             modelBuilder.Entity<Issued_Invoice>().HasOne(ii => ii.Invoice).WithMany(ii => ii.Issued_Invoices).HasForeignKey(ii => ii.Invoice_Id);
 
             modelBuilder.Entity<Issued_Invoice>().HasOne(ii => ii.Tenant).WithMany(ii => ii.Issued_Invoices).HasForeignKey(ii => ii.Tenant_Id);
+
+            //IssuedInvoiceTenant
+            modelBuilder.Entity<IssuedInvoiceTenant>().HasOne(ii => ii.Invoice).WithMany(ii => ii.IssuedInvoiceTenants).HasForeignKey(ii => ii.Invoice_Id);
+
+            modelBuilder.Entity<IssuedInvoiceTenant>().HasOne(ii => ii.Tenant).WithMany(ii => ii.IssuedInvoiceTenants).HasForeignKey(ii => ii.Tenant_Id);
 
             //Message
             modelBuilder.Entity<Message>().HasOne(ii => ii.Admin).WithMany(ii => ii.Messages).HasForeignKey(ii => ii.Admin_Id);

@@ -21,18 +21,11 @@ namespace MOJA_ZGRADA.Data
         public string Invoice_Name { get; set; }
 
         [Required]
-        public string Invoice_Type { get; set; } //1.po stanu, 2.po kvadraturi, 3.po broju stanara => [fromquery] maxamount
+        public string Invoice_Type { get; set; }
         
-        [ForeignKey("Building")]
-        public int Building_Id { get; set; }
-
-        [Required]
-        [DataType(DataType.Date)]
-        public DateTime Invoice_DateTime { get; set; }
-
-        [Required]
-        public double Invoice_Amount { get; set; }
-
+        [ForeignKey("Admin")]
+        public int Admin_Id { get; set; }
+        
         [Required]
         public string Invoice_Bank_Account { get; set; }
 
@@ -48,12 +41,17 @@ namespace MOJA_ZGRADA.Data
 
         public string Invoice_Call_to_Number { get; set; }
 
+        public double Invoice_Payment_Per_Square_Meter { get; set; } = 0;
+
 
         [JsonIgnore]
         public virtual ICollection<Issued_Invoice> Issued_Invoices { get; set; }
         
         [JsonIgnore]
-        public virtual Building Building { get; set; }
+        public virtual ICollection<IssuedInvoiceTenant> IssuedInvoiceTenants { get; set; }
+
+        [JsonIgnore]
+        public virtual Admin Admin { get; set; }
 
     }
 }
