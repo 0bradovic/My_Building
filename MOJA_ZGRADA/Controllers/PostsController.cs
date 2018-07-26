@@ -172,7 +172,7 @@ namespace MOJA_ZGRADA.Controllers
             
         }
 
-        // DELETE: api/Posts/5
+        // DELETE: api/Posts/id
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeletePost([FromRoute] int id) //Delete post with specific id
         {

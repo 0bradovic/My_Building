@@ -23,47 +23,171 @@ namespace MOJA_ZGRADA.Controllers
             _context = context;
         }
 
-        // GET: api/IssuedInvoices
+        // GET: api/IssuedInvoices/All
         [HttpGet]
-        public IEnumerable<Issued_Invoice> GetIssued_Invoices() //Get all Issued_Invoices
-        {
-            return _context.Issued_Invoices;
-        }
-
-        // GET: api/IssuedInvoices/id
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetIssued_Invoice([FromRoute] int id) //Get Issued_Invoice with specific Id
+        [Route("All")]
+        public async Task<IActionResult> Get_All_Issued_Invoices() //Get all Issued_Invoices from db
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var issued_Invoice = await _context.Issued_Invoices.FindAsync(id);
+            var Selected_Issued_Invoice = await _context.Issued_Invoices
+                .Join(_context.Invoices,
+                      emp => emp.Invoice_Id,
+                      per => per.Id,
+                      (emp, per) => new { emp, per })
+                .Join(_context.Tenants,
+                       o => o.emp.Tenant_Id,
+                       sal => sal.Id,
+                       (emp1, sal) => new { emp1, sal })
+                .ToListAsync();
 
-            if (issued_Invoice == null)
+            if (Selected_Issued_Invoice == null)
             {
                 return NotFound();
             }
 
-            return Ok(issued_Invoice);
+
+            return Ok(Selected_Issued_Invoice);
         }
 
-        // PUT: api/IssuedInvoices/id
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutIssued_Invoice([FromRoute] int id, [FromBody] Issued_Invoice issued_Invoice) //Update Issued_Invoice with specific Id
+        // GET: api/IssuedInvoices/?tenant_id={tenant_id}&invoice_id={invoice_id}
+        [HttpGet]
+        public async Task<IActionResult> GetIssued_Invoice(int tenant_id, int invoice_id) //Get Issued_Invoice with specific pair of Tenant_Id + Invoice_Id
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            
+            var Selected_Issued_Invoice = await _context.Issued_Invoices.Where(i => (i.Invoice_Id == invoice_id && i.Tenant_Id == tenant_id))
+                 .Join(_context.Invoices.Where(i => i.Id == invoice_id),
+                       emp => emp.Invoice_Id,
+                       per => per.Id,
+                       (emp, per) => new { emp, per })
+                 .Join(_context.Tenants.Where(t=>t.Id==tenant_id),
+                       o => o.emp.Tenant_Id,
+                       sal => sal.Id,
+                       (emp1, sal) => new { emp1, sal })
+                .ToListAsync();
+
+            if (Selected_Issued_Invoice == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(Selected_Issued_Invoice);
+        }
+
+        // GET: api/IssuedInvoices/Get/{InvoiceName}
+        [HttpGet("Invoice_Name")]
+        [Route("Get/{Invoice_Name}")]
+        public async Task<IActionResult> GetIssued_Invoice_By_InvoiceName([FromRoute] string Invoice_Name) //Get Issued_Invoice with specific Invoice_Name
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            if (id != issued_Invoice.Invoice_Id)
+            List<Issued_Invoice> IIlist = new List<Issued_Invoice>();
+
+            foreach (var issuedInvoice in await _context.Issued_Invoices.ToListAsync())
+            {
+                if (issuedInvoice == null)
+                {
+                    continue;
+                }
+
+                IIlist.Add(issuedInvoice);
+            }
+
+            return Ok(IIlist);
+        }
+
+        // GET: api/IssuedInvoices/Admin/{Admin_Id}
+        [HttpGet("Admin_Id")]
+        [Route("Admin/{Admin_Id}")]
+        public async Task<IActionResult> GetIssued_Invoice_By_Admin_Id([FromRoute] int Admin_Id) //Get Issued_Invoice with specific Admin_Id
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            List<Issued_Invoice> IIlist = new List<Issued_Invoice>();
+
+            foreach (var issuedInvoice in await _context.Issued_Invoices.Where(c => _context.Invoices.Where(i => i.Admin_Id == Admin_Id).Select(b => b.Id).Contains(c.Invoice_Id)).ToListAsync())
+            {
+                if (issuedInvoice == null)
+                {
+                    continue;
+                }
+
+                IIlist.Add(issuedInvoice);
+            }
+
+            return Ok(IIlist);
+        }
+
+        // GET: api/IssuedInvoices/Building/{Building_Id}
+        [HttpGet("Building_Id")]
+        [Route("Building/{Building_Id}")]
+        public async Task<IActionResult> GetIssued_Invoice_By_Building_Id([FromRoute] int Building_Id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            List<Issued_Invoice> IIlist = new List<Issued_Invoice>();
+
+            foreach (var tenant in await _context.Tenants.Where(i=>i.Building_Id==Building_Id).ToListAsync())
+            {
+                foreach (var issinv in await _context.Issued_Invoices.Where(i => i.Tenant_Id == tenant.Id).ToListAsync())
+                {
+                    if (issinv == null)
+                    {
+                        continue;
+                    }
+
+                    IIlist.Add(issinv);
+                }
+            }
+
+            return Ok(IIlist);
+        }
+
+        // PUT: api/IssuedInvoices/?tenant_id={tenant_id}&invoice_id={invoice_id}
+        [HttpPut]
+        public async Task<IActionResult> PutIssued_Invoice(int tenant_id, int invoice_id, [FromBody] Issued_Invoice issued_Invoice) //Update Issued_Invoice with specific pair of Tenant_Id + Invoice_Id ***IN DEV***
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            if (invoice_id != issued_Invoice.Invoice_Id)
             {
                 return BadRequest();
             }
 
-            _context.Entry(issued_Invoice).State = EntityState.Modified;
+            if (tenant_id != issued_Invoice.Tenant_Id)
+            {
+                return BadRequest();
+            }
+
+            var iiAdmin = await _context.Issued_Invoices.Where(i => (i.Invoice_Id == invoice_id && i.Tenant_Id == tenant_id)).FirstOrDefaultAsync();
+
+            PropertiesComparison.CompareAndForward(iiAdmin, issued_Invoice);
+
+            _context.Entry(iiAdmin).State = EntityState.Modified;
+
+            var iiTenant = await _context.IssuedInvoiceTenants.Where(i => (i.Invoice_Id == invoice_id && i.Tenant_Id == tenant_id)).FirstOrDefaultAsync();
+
+            PropertiesComparison.CompareAndForward(iiTenant, issued_Invoice);
+            _context.Entry(iiTenant).State = EntityState.Modified;
 
             try
             {
@@ -71,7 +195,7 @@ namespace MOJA_ZGRADA.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!Issued_InvoiceExists(id))
+                if (!Issued_InvoiceExists(tenant_id, invoice_id))
                 {
                     return NotFound();
                 }
@@ -81,7 +205,7 @@ namespace MOJA_ZGRADA.Controllers
                 }
             }
 
-            return NoContent();
+            return Ok(issued_Invoice);
         }
 
         // POST: api/IssuedInvoices
@@ -102,11 +226,11 @@ namespace MOJA_ZGRADA.Controllers
             Issued_Invoice.Issued_Invoice_Creation_DateTime = DateTime.Now;
             Issued_Invoice_Tenant.Issued_Invoice_Creation_DateTime = DateTime.Now;
 
-            var InvoiceType = _context.Invoices.Where(i=>i.Id==issued_Invoice_model.Invoice_Id).Select(i => i.Invoice_Type).FirstOrDefault();
+            var InvoiceType = await _context.Invoices.Where(i=>i.Id==issued_Invoice_model.Invoice_Id).Select(i => i.Invoice_Type).FirstOrDefaultAsync();
 
-            Invoice inv = _context.Invoices.Where(i => i.Invoice_Type == InvoiceType).FirstOrDefault();
+            Invoice inv = await _context.Invoices.Where(i => i.Id == issued_Invoice_model.Invoice_Id).FirstOrDefaultAsync();
             
-            var building = _context.Buildings.Where(i => i.Id == issued_Invoice_model.Building_Id).FirstOrDefault();
+            var building = await _context.Buildings.Where(i => i.Id == issued_Invoice_model.Building_Id).FirstOrDefaultAsync();
 
             Issued_Invoice.Issued_Invoice_Name = inv.Invoice_Name;
             Issued_Invoice_Tenant.Issued_Invoice_Name = inv.Invoice_Name;
@@ -138,8 +262,9 @@ namespace MOJA_ZGRADA.Controllers
                     }
                 case "Po Stanaru":
                     {
+
                         var PoStanaru = issued_Invoice_model.Issued_Invoice_Amount_Total / building.Number_Of_Tenants;
-                        foreach (var tenant in _context.Tenants)
+                        foreach (var tenant in _context.Tenants.ToList())
                         {
                             if (tenant.Building_Id == issued_Invoice_model.Building_Id)
                             {
@@ -152,8 +277,8 @@ namespace MOJA_ZGRADA.Controllers
                                 _context.Issued_Invoices.Add(Issued_Invoice);
                                 _context.IssuedInvoiceTenants.Add(Issued_Invoice_Tenant);
 
-                                _context.SaveChanges();
-                                
+                                await _context.SaveChangesAsync();
+
                             }
                         }
                         
@@ -162,7 +287,7 @@ namespace MOJA_ZGRADA.Controllers
                 case "Po Metru Kvadratnom":
                     {
                         var PoMetruKvadratnom = inv.Invoice_Payment_Per_Square_Meter;
-                        foreach (var tenant in _context.Tenants)
+                        foreach (var tenant in _context.Tenants.ToList())
                         {
                             if (tenant.Building_Id == issued_Invoice_model.Building_Id)
                             {
@@ -175,7 +300,7 @@ namespace MOJA_ZGRADA.Controllers
                                 _context.Issued_Invoices.Add(Issued_Invoice);
                                 _context.IssuedInvoiceTenants.Add(Issued_Invoice_Tenant);
 
-                                _context.SaveChanges();
+                                await _context.SaveChangesAsync();
 
                             }
                         }
@@ -191,7 +316,7 @@ namespace MOJA_ZGRADA.Controllers
             }
             catch (DbUpdateException)
             {
-                if (Issued_InvoiceExists(Issued_Invoice.Invoice_Id))
+                if (Issued_InvoiceExists(Issued_Invoice.Tenant_Id, Issued_Invoice.Invoice_Id))
                 {
                     return new StatusCodeResult(StatusCodes.Status409Conflict);
                 }
@@ -200,13 +325,14 @@ namespace MOJA_ZGRADA.Controllers
                     throw;
                 }
             }
-            
-            return Ok( new {_context.Issued_Invoices});
+
+            var ret = _context.Issued_Invoices.Where(i => i.Invoice_Id == issued_Invoice_model.Invoice_Id).ToList();
+            return Ok( new { ret });
         }
 
         // DELETE: api/IssuedInvoices/?tenant_id={tenant_id}&invoice_id={invoice_id}
         [HttpDelete]
-        public async Task<IActionResult> DeleteIssued_Invoice(int tenant_id, int invoice_id) //Delete Issued_Invoice with specific Id
+        public async Task<IActionResult> DeleteIssued_Invoice(int tenant_id, int invoice_id) //Delete Issued_Invoice with specific pair of Tenant_Id + Invoice_Id
         {
             if (!ModelState.IsValid)
             {
@@ -225,11 +351,35 @@ namespace MOJA_ZGRADA.Controllers
             return Ok(issued_Invoice);
         }
 
-
-
-        private bool Issued_InvoiceExists(int id)
+        // DELETE: api/IssuedInvoices/{InvoiceName}
+        [HttpDelete("Invoice_Name")]
+        [Route("{Invoice_Name}")]
+        public async Task<IActionResult> DeleteIssued_Invoice_By_InvoiceName([FromRoute] string Invoice_Name)
         {
-            return _context.Issued_Invoices.Any(e => e.Invoice_Id == id);
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            foreach (var issuedInvoice in await _context.Issued_Invoices.Where(i => i.Issued_Invoice_Name == Invoice_Name).ToListAsync())
+            {
+                if (issuedInvoice == null)
+                {
+                    continue;
+                }
+
+                _context.Issued_Invoices.Remove(issuedInvoice);
+                await _context.SaveChangesAsync();
+            }
+
+            return Ok();
+        }
+
+
+
+        private bool Issued_InvoiceExists(int tenant_id, int invoice_id)
+        {
+            return _context.Issued_Invoices.Any(i => (i.Invoice_Id == invoice_id && i.Tenant_Id == tenant_id));
         }
 
     }
