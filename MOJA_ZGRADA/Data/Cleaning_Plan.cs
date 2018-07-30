@@ -17,14 +17,27 @@ namespace MOJA_ZGRADA.Data
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         
-        public string Cleaning_Type { get; set; }
+        [ForeignKey("Building")]
+        public int Building_Id { get; set; }
+
+        [Required]
+        public string Cleaning_Nickname { get; set; }
+        
+        public string Cleaning_Type { get; set; } //1. Dezinsekcija, 2.Deritizacija, 3. Dezinsekcija i Deritizacija
         
         public double Cleaning_Price { get; set; }
+
+        [Required]
+        [DataType(DataType.Date)]
+        public DateTime Cleaning_Plan_DateTime { get; set; }
 
 
 
         [JsonIgnore]
         public virtual ICollection<Created_Cleaning_Plan> Created_Cleaning_Plans { get; set; }
+        
+        [JsonIgnore]
+        public virtual Building Building { get; set; }
 
     }
 }

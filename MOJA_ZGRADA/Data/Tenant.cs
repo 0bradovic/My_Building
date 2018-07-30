@@ -51,11 +51,18 @@ namespace MOJA_ZGRADA.Data
 
         [JsonIgnore]
         public virtual ICollection<Message> Messages { get; set; }
-        
+
+        [JsonIgnore]
+        public virtual ICollection<MessageTenant> MessageTenants { get; set; }
+
         [JsonIgnore]
         public virtual ICollection<Issued_Invoice> Issued_Invoices { get; set; }
 
         [JsonIgnore]
         public virtual ICollection<IssuedInvoiceTenant> IssuedInvoiceTenants { get; set; }
+
+        [JsonIgnore]
+        public virtual ICollection<Created_Cleaning_Plan> Created_Cleaning_Plans { get; set; }
+
     }
 }

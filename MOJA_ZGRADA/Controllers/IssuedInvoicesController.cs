@@ -178,7 +178,8 @@ namespace MOJA_ZGRADA.Controllers
 
             var IIexistTenant = await _context.IssuedInvoiceTenants.Where(i => (i.Invoice_Id == invoice_id && i.Tenant_Id == tenant_id)).FirstOrDefaultAsync();
 
-            if(IIexistTenant == null) //make new issued invoice for tenant if he deleted 
+            //make new issued invoice for tenant if he deleted
+            if (IIexistTenant == null) 
             {
                 var Issued_Invoice_Tenant = new IssuedInvoiceTenant();
                 PropertiesComparison.CompareAndForward(Issued_Invoice_Tenant, issued_Invoice_Model);
@@ -481,7 +482,7 @@ namespace MOJA_ZGRADA.Controllers
                 }
             }
 
-            var ret = _context.Issued_Invoices.Where(i => i.Invoice_Id == issued_Invoice_Model.Invoice_Id).ToList();
+            var ret = _context.Issued_Invoices.Where(i => (i.Invoice_Id == invoice_Id && i.Tenant_Id == tenant_Id)).ToList();
             return Ok(new { ret });
         }
         

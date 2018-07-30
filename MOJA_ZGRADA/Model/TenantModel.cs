@@ -26,7 +26,7 @@ namespace MOJA_ZGRADA.Model
         [Required]
         public int Building_Id { get; set; }
         
-        public string Address { get; set; }
+        //public string Address { get; set; }
         
         public int Apartment_Number { get; set; }
 
@@ -35,6 +35,8 @@ namespace MOJA_ZGRADA.Model
         public int Number_Of_Occupants { get; set; }
         
         public int Floor_Number { get; set; }
+
+        public int Quadrature { get; set; }
 
         //[Required]
         //public string UserName { get; set; }

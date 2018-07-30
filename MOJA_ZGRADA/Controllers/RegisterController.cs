@@ -33,7 +33,7 @@ namespace MOJA_ZGRADA.Controllers
         [HttpPost]
         [Authorize(Roles = "Admin")]
         [Route("Initial")]
-        public async Task<IActionResult> Initial([FromBody] RegisterModel registerModel)  //Admin's initial registration of building + tenants *PROBLEM: NE VRACA NISTA U POSTMAN?!*
+        public async Task<IActionResult> Initial([FromBody] RegisterModel registerModel)  //Admin's initial registration of building + tenants (tbl_tenant, tbl_building, aspnetusers) *PROBLEM: NE VRACA NISTA U POSTMAN?!*
         {
             if (!ModelState.IsValid)
             {
@@ -137,28 +137,30 @@ namespace MOJA_ZGRADA.Controllers
         [HttpPost]
         [Authorize(Roles = "Admin")]
         [Route("Tenant/New")]
-        public async Task<IActionResult> NewTenant([FromBody] TenantModel tenantModel)  //For adding a new tenant
+        public async Task<IActionResult> NewTenant([FromBody] TenantModel tenantModel)  //For adding a new tenant, tbl_tenant and AspNetUsers
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var building = _context.Buildings.Where(b => b.Address == tenantModel.Address).Select(i => i.Id).FirstOrDefault();
+            var building = _context.Buildings.Where(b => b.Id == tenantModel.Building_Id).Select(i => i.Id).FirstOrDefault();
 
             if (building == 0)
             {
-                return NotFound(tenantModel.Address);
+                return NotFound(tenantModel.Building_Id);
             }
 
             try
             {
                 //get number of last apartment
-                int maxApartmentNumber = _context.Buildings.Where(t => t.Address == tenantModel.Address).Select(i => i.Number_Of_Apartments).DefaultIfEmpty(0).Max();
+                int maxApartmentNumber = _context.Buildings.Where(t => t.Id == tenantModel.Building_Id).Select(i => i.Number_Of_Apartments).DefaultIfEmpty(0).Max();
+
+                Building b = await _context.Buildings.Where(t => t.Id == tenantModel.Building_Id).FirstOrDefaultAsync();
 
                 //UserName template: Address+Stan+BrStana
                 //Password template: Address+Stan+BrStana+#
-                var meta_User_Name = tenantModel.Address + "Stan" + (maxApartmentNumber + 1).ToString();
+                var meta_User_Name = b.Address + "Stan" + (maxApartmentNumber + 1).ToString();
                 var Array = meta_User_Name.Split(" ");
                 var User_Name = string.Join("", Array);
                 var Password = User_Name + "#";
@@ -205,7 +207,7 @@ namespace MOJA_ZGRADA.Controllers
                 await _userManager.AddToRoleAsync(user, "Tenant");
 
                 //increase number of apartments for building
-                var apartmentIncrement = _context.Buildings.SingleOrDefault(b => b.Id == building);
+                var apartmentIncrement = _context.Buildings.SingleOrDefault(x => x.Id == building);
                 if (result != null)
                 {
                     apartmentIncrement.Number_Of_Apartments = maxApartmentNumber + 1;
@@ -220,6 +222,51 @@ namespace MOJA_ZGRADA.Controllers
             }
         }
 
+
+        // PUT: api/Register/Tenant/Id
+        [HttpPut("{id}")]
+        [Route("Tenant/{id}")]
+        public async Task<IActionResult> PutTenantPass([FromRoute] int id, [FromBody] string Pass) //Update Password of Tenant with specific Id, into AspNetUsers table
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var ten = await _context.Tenants.Where(i => i.Id == id).FirstOrDefaultAsync();
+
+            if (ten == null)
+            {
+                return BadRequest();
+            }
+            
+
+            Account u = _userManager.FindByNameAsync(ten.UserName).Result;
+
+            u.PasswordHash = _userManager.PasswordHasher.HashPassword(u, Pass);
+
+            try
+            {
+                //Execute updates
+                var result = await _userManager.UpdateAsync(u);
+                if (!result.Succeeded)
+                {
+                    return NotFound(result);
+                }
+                //_context.Entry(ten).State = EntityState.Modified;
+                _context.SaveChanges();
+
+
+                return Ok();
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                return NotFound(ex);
+            }
+
+
+        }
+        
         //POST: api/Register/NewBuilding
         [HttpPost]
         [Authorize(Roles = "Admin")]

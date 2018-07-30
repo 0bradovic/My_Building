@@ -39,15 +39,15 @@ namespace MOJA_ZGRADA.Data
 
         [JsonIgnore]
         public virtual ICollection<Handles> Handleses { get; set; }
-
-        [JsonIgnore]
-        public virtual ICollection<Created_Cleaning_Plan> Created_Cleaning_Plans { get; set; }
-
+        
         [JsonIgnore]
         public virtual ICollection<Invoice> Invoices { get; set; }
         
         [JsonIgnore]
         public virtual ICollection<Message> Messages { get; set; }
+
+        [JsonIgnore]
+        public virtual ICollection<MessageTenant> MessageTenants { get; set; }
 
         [JsonIgnore]
         public virtual ICollection<Post> Posts { get; set; }

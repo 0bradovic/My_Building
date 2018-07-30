@@ -16,11 +16,8 @@ namespace MOJA_ZGRADA.Data
         [ForeignKey("Cleaning_Plan")]
         public int Cleaning_Plan_Id { get; set; }
 
-        [ForeignKey("Building")]
-        public int Building_Id { get; set; }
-
-        [ForeignKey("Admin")]
-        public int Admin_Id { get; set; }
+        [ForeignKey("Tenant")]
+        public int Tenant_Id { get; set; }
         
         [DataType(DataType.Date)]
         public DateTime Cleaning_Issued_DateTime { get; set; }
@@ -28,16 +25,20 @@ namespace MOJA_ZGRADA.Data
         [DataType(DataType.Date)]
         public DateTime Cleaning_DateTime { get; set; }
 
+        public bool Cleaning_Reminder { get; set; } = false;
+
+        [DataType(DataType.Date)]
+        public DateTime Cleaning_Reminder_DateTime { get; set; }
+
+
 
 
         [JsonIgnore]
         public virtual Cleaning_Plan Cleaning_Plan { get; set; }
 
         [JsonIgnore]
-        public virtual Building Building { get; set; }
-
-        [JsonIgnore]
-        public virtual Admin Admin { get; set; }
+        public virtual Tenant Tenant { get; set; }
+        
         
     }
 }

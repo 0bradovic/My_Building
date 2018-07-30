@@ -1,17 +1,15 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
-using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Migrations.Operations;
-using System.ComponentModel.DataAnnotations;
-using Newtonsoft.Json;
 
 namespace MOJA_ZGRADA.Data
 {
-    [Table("tbl_Message")]
-    public class Message
+    [Table("tbl_MessageTenant")]
+    public class MessageTenant
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -22,14 +20,13 @@ namespace MOJA_ZGRADA.Data
 
         [ForeignKey("Tenant")]
         public int Tenant_Id { get; set; }
-        
+
         public string Text { get; set; }
 
         public string File_URL { get; set; }
 
         [DataType(DataType.Date)]
         public DateTime Message_Issued_DateTime { get; set; }
-
 
 
         [JsonIgnore]
