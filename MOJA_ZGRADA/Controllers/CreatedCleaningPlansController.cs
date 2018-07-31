@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MOJA_ZGRADA.Context;
 using MOJA_ZGRADA.Data;
+using MOJA_ZGRADA.Model;
+using MOJA_ZGRADA.Static;
 
 namespace MOJA_ZGRADA.Controllers
 {
@@ -68,35 +70,51 @@ namespace MOJA_ZGRADA.Controllers
             return Ok(created_Cleaning_Plans);
         }
 
-        // GET: api/CreatedCleaningPlans/Id
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetCreated_Cleaning_Plan([FromRoute] int id) //***Get Created_Cleaning_Plan with specific Id
+        // GET: api/CreatedCleaningPlans/?tenant_id={tenant_id}&cleaning_plan_id={cleaning_plan_id}
+        [HttpGet]
+        public async Task<IActionResult> GetCreated_Cleaning_Plan(int tenant_id, int cleaning_plan_id) //Get Created_Cleaning_Plan with specific pair of tenant_id + cleaning_plan_id
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var created_Cleaning_Plan = await _context.Created_Cleaning_Plans.FindAsync(id);
+            //var created_Cleaning_Plan = await _context.Created_Cleaning_Plans.FindAsync(id);
 
-            if (created_Cleaning_Plan == null)
+            var selected_Cleaning_Plan = await _context.Created_Cleaning_Plans.Where(i => (i.Cleaning_Plan_Id == cleaning_plan_id && i.Tenant_Id == tenant_id))
+                 .Join(_context.Cleaning_Plans.Where(i => i.Id == cleaning_plan_id),
+                       emp => emp.Tenant_Id,
+                       per => per.Id,
+                       (emp, per) => new { emp, per })
+                 .Join(_context.Tenants.Where(t => t.Id == tenant_id),
+                       o => o.emp.Tenant_Id,
+                       sal => sal.Id,
+                       (emp1, sal) => new { emp1, sal })
+                .ToListAsync();
+
+            if (selected_Cleaning_Plan == null)
             {
                 return NotFound();
             }
 
-            return Ok(created_Cleaning_Plan);
+            return Ok(selected_Cleaning_Plan);
         }
 
-        // PUT: api/CreatedCleaningPlans/Id
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutCreated_Cleaning_Plan([FromRoute] int id, [FromBody] Created_Cleaning_Plan created_Cleaning_Plan) //***Update Created_Cleaning_Plan with specific Id
+        // PUT: api/CreatedCleaningPlans/?tenant_id={tenant_id}&cleaning_plan_id={cleaning_plan_id}
+        [HttpPut]
+        public async Task<IActionResult> PutCreated_Cleaning_Plan(int tenant_id, int cleaning_plan_id, [FromBody] Created_Cleaning_Plan created_Cleaning_Plan) //Update Created_Cleaning_Plan with specific pair of tenant_id + cleaning_plan_id
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            if (id != created_Cleaning_Plan.Cleaning_Plan_Id)
+            if (cleaning_plan_id != created_Cleaning_Plan.Cleaning_Plan_Id)
+            {
+                return BadRequest();
+            }
+
+            if (tenant_id != created_Cleaning_Plan.Tenant_Id)
             {
                 return BadRequest();
             }
@@ -109,7 +127,7 @@ namespace MOJA_ZGRADA.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!Created_Cleaning_PlanExists(id))
+                if (!Created_Cleaning_PlanExists(created_Cleaning_Plan.Tenant_Id, created_Cleaning_Plan.Cleaning_Plan_Id))
                 {
                     return NotFound();
                 }
@@ -122,9 +140,48 @@ namespace MOJA_ZGRADA.Controllers
             return NoContent();
         }
 
+        // PUT: api/CreatedCleaningPlans/Reminder/?tenant_id={tenant_id}&cleaning_plan_id={cleaning_plan_id}
+        [HttpPut]
+        [Route("Reminder")]
+        public async Task<IActionResult> PutCreated_Cleaning_Plan_Set_Reminder(int tenant_id, int cleaning_plan_id, [FromBody] CreatedCleaningPlanReminderModel  reminderModel) //Update Created_Cleaning_Plan Reminder with specific pair of tenant_id + cleaning_plan_id
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var created_Cleaning_Plan = await _context.Created_Cleaning_Plans.Where(i => (i.Cleaning_Plan_Id == cleaning_plan_id && i.Tenant_Id == tenant_id)).FirstOrDefaultAsync();
+
+            PropertiesComparison.CompareAndForward(created_Cleaning_Plan, reminderModel);
+
+
+
+
+            _context.Entry(created_Cleaning_Plan).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!Created_Cleaning_PlanExists(created_Cleaning_Plan.Tenant_Id, created_Cleaning_Plan.Cleaning_Plan_Id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
+
+        }
+
         // POST: api/CreatedCleaningPlans
         [HttpPost]
-        public async Task<IActionResult> PostCreated_Cleaning_Plan([FromBody] Created_Cleaning_Plan created_Cleaning_Plan) //***Create a new Created_Cleaning_Plan
+        public async Task<IActionResult> PostCreated_Cleaning_Plan([FromBody] Created_Cleaning_Plan created_Cleaning_Plan) //Create a new Created_Cleaning_Plan
         {
             if (!ModelState.IsValid)
             {
@@ -138,7 +195,7 @@ namespace MOJA_ZGRADA.Controllers
             }
             catch (DbUpdateException)
             {
-                if (Created_Cleaning_PlanExists(created_Cleaning_Plan.Cleaning_Plan_Id))
+                if (Created_Cleaning_PlanExists(created_Cleaning_Plan.Tenant_Id, created_Cleaning_Plan.Cleaning_Plan_Id))
                 {
                     return new StatusCodeResult(StatusCodes.Status409Conflict);
                 }
@@ -151,16 +208,16 @@ namespace MOJA_ZGRADA.Controllers
             return CreatedAtAction("GetCreated_Cleaning_Plan", new { id = created_Cleaning_Plan.Cleaning_Plan_Id }, created_Cleaning_Plan);
         }
 
-        // DELETE: api/CreatedCleaningPlans/Id
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteCreated_Cleaning_Plan([FromRoute] int id) //***Delete Created_Cleaning_Plan with specific Id
+        // DELETE: api/CreatedCleaningPlans/?tenant_id={tenant_id}&cleaning_plan_id={cleaning_plan_id}
+        [HttpDelete]
+        public async Task<IActionResult> DeleteCreated_Cleaning_Plan(int tenant_id, int cleaning_plan_id) //Delete Created_Cleaning_Plan with specific pair of tenant_id + cleaning_plan_id
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var created_Cleaning_Plan = await _context.Created_Cleaning_Plans.FindAsync(id);
+            var created_Cleaning_Plan = await _context.Created_Cleaning_Plans.Where((i => (i.Cleaning_Plan_Id == cleaning_plan_id && i.Tenant_Id == tenant_id))).FirstOrDefaultAsync();
             if (created_Cleaning_Plan == null)
             {
                 return NotFound();
@@ -173,11 +230,11 @@ namespace MOJA_ZGRADA.Controllers
         }
 
 
+        
 
-        //***
-        private bool Created_Cleaning_PlanExists(int id)
+        private bool Created_Cleaning_PlanExists(int tenant_id, int cleaning_plan_id)
         {
-            return _context.Created_Cleaning_Plans.Any(e => e.Cleaning_Plan_Id == id);
+            return _context.Created_Cleaning_Plans.Any(i => (i.Cleaning_Plan_Id == cleaning_plan_id && i.Tenant_Id == tenant_id));
         }
     }
 }
