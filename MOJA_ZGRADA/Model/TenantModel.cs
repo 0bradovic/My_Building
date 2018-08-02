@@ -37,11 +37,6 @@ namespace MOJA_ZGRADA.Model
         public int Floor_Number { get; set; }
 
         public int Quadrature { get; set; }
-
-        //[Required]
-        //public string UserName { get; set; }
-
-        //[Required]
-        //public string Password { get; set; }
+        
     }
 }

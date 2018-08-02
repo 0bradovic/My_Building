@@ -84,10 +84,6 @@ namespace MOJA_ZGRADA.Context
 
             //Cleaning_Plan unique collumns
             modelBuilder.Entity<Cleaning_Plan>().HasIndex(cp => cp.Cleaning_Nickname).IsUnique(true);
-
-            //modelBuilder.Entity<Cleaning_Plan>().HasIndex(cp => cp.Cleaning_Type).IsUnique(true);
-
-            //modelBuilder.Entity<Cleaning_Plan>().HasIndex(cp => cp.Cleaning_Price).IsUnique(true);
             #endregion
 
             #region Composite Keys

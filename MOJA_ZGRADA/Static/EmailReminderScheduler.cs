@@ -1,5 +1,4 @@
 ﻿using MOJA_ZGRADA.Context;
-using Quartz;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace MOJA_ZGRADA.Static
 {
-    public class EmailReminderScheduler : IJob
+    public class EmailReminderScheduler
     {
         private readonly MyDbContext _context;
 
@@ -17,14 +16,7 @@ namespace MOJA_ZGRADA.Static
         {
             _context = context;
         }
-
-        public Task Execute(IJobExecutionContext context)
-        {
-            //throw new NotImplementedException();
-
-            return SchedulerStart();
-        }
-
+        
         public Task SchedulerStart()
         {
             foreach (var CreatedCleaningPlan in _context.Created_Cleaning_Plans.ToList())
@@ -35,15 +27,11 @@ namespace MOJA_ZGRADA.Static
                     var Tenant = _context.Tenants.Where(i => i.Id == CreatedCleaningPlan.Tenant_Id).FirstOrDefault();
 
                     var TimeOfCleaning = _context.Created_Cleaning_Plans.Where(k => k.Tenant_Id == Tenant.Id).Select(t => t.Cleaning_DateTime).FirstOrDefault();
-
-                    //SmtpClient client = new SmtpClient("mysmtpserver");
-                    //client.UseDefaultCredentials = false;
-                    //client.Credentials = new NetworkCredential("username", "password");
-
+                    
                     SmtpClient smtpClient = new SmtpClient("smtp.live.com");
                     MailMessage mailMessage = new MailMessage();
-                    mailMessage.From = new MailAddress("lord_ybrdic@hotmail.com");
-                    mailMessage.To.Add("obradpower@hotmail.com");
+                    mailMessage.From = new MailAddress("mail1@hotmail.com");
+                    mailMessage.To.Add("mail2@hotmail.com");
                     mailMessage.Body = "Dragi "+ Tenant.UserName +" vreme ciscenja je: "+ TimeOfCleaning;
                     mailMessage.IsBodyHtml = true;
                     mailMessage.Subject = "Cleaning date reminder";

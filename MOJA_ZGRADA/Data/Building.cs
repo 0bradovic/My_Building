@@ -38,8 +38,7 @@ namespace MOJA_ZGRADA.Data
         public int Number_Of_Floors { get; set; }
         
         public bool Special_Apartments_Annotation { get; set; } = false;
-
-        //eventulno dodati kvadraturu svih stana
+        
 
 
 

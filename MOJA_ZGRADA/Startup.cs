@@ -19,9 +19,6 @@ using Microsoft.IdentityModel.Tokens;
 using MOJA_ZGRADA.Context;
 using MOJA_ZGRADA.Data;
 using MOJA_ZGRADA.Static;
-using Quartz;
-using Quartz.Impl;
-
 using Hangfire;
 using Hangfire.AspNetCore;
 using Hangfire.SqlServer;
@@ -79,8 +76,7 @@ namespace MOJA_ZGRADA
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.AddAuthorization();
 
-            HangfireService(services);
-            //ConfigureQuartz(services);
+            //HangfireService(services);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -88,8 +84,8 @@ namespace MOJA_ZGRADA
         {
             GlobalConfiguration.Configuration.UseSqlServerStorage(Configuration.GetConnectionString("DefaultConnection"));
 
-            app.UseHangfireServer();
-            app.UseHangfireDashboard();
+            //app.UseHangfireServer();
+            //app.UseHangfireDashboard();
 
             if (env.IsDevelopment())
             {
@@ -102,14 +98,12 @@ namespace MOJA_ZGRADA
             }
 
             Seed.Initialize(context, userManager, roleManager).Wait();
-
-
-
+            
             app.UseAuthentication();
             app.UseHttpsRedirection();
             app.UseMvc();
         }
-
+        
         void HangfireService(IServiceCollection services)
         {
             JobStorage.Current = new SqlServerStorage(Configuration.GetConnectionString("DefaultConnection"));
@@ -118,41 +112,6 @@ namespace MOJA_ZGRADA
 
             RecurringJob.AddOrUpdate(() => x.SchedulerStart() , Cron.Minutely);
         }
-
-        void ConfigureQuartz(IServiceCollection services)
-        {
-            // First we must get a reference to a scheduler
-            ISchedulerFactory sf = new StdSchedulerFactory();
-            IScheduler scheduler = sf.GetScheduler().Result;
-
-            
-            DateTime utcTime = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Utc);
-            DateTimeOffset targetTime = new DateTimeOffset(utcTime.ToLocalTime());
-            
-
-            var userEmailsJob = JobBuilder.Create<EmailReminderScheduler>()
-                //.WithIdentity("SendUserEmails")
-                .Build();
-
-            var userEmailsTrigger = TriggerBuilder.Create()
-                //.WithIdentity("UserEmailsCron")
-                .WithSimpleSchedule(x => x
-                    .WithIntervalInSeconds(5)
-                    .RepeatForever())
-                .StartAt(targetTime)
-                //.StartNow()
-                //.WithCronSchedule("0 0 17 ? * MON,TUE,WED")
-                .Build();
-            
-            scheduler.ScheduleJob(userEmailsJob, userEmailsTrigger).Wait();
-            scheduler.Start();
-
-            services.AddSingleton<IScheduler>(scheduler);
-
-        }
-
-
-
-
+        
     }
 }

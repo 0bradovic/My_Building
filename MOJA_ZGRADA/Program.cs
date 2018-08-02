@@ -9,15 +9,11 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using MOJA_ZGRADA.Static;
-using Quartz;
-using Quartz.Impl;
 
 namespace MOJA_ZGRADA
 {
     public class Program
     {
-        private static IScheduler _scheduler;
-        
         public static void Main(string[] args)
         {
             CreateWebHostBuilder(args).Build().Run();

@@ -89,7 +89,7 @@ namespace MOJA_ZGRADA.Controllers
             return Ok(message);
         }
 
-
+        //No PUT for messages
         /*
         // PUT: api/MessageTenants/Id
         [HttpPut("{id}")]

@@ -40,6 +40,7 @@ namespace MOJA_ZGRADA.Controllers
                 return BadRequest(ModelState);
             }
 
+            //PropertiesComparison.CompareAndForward(building, registerModel);
             var building = new Building
             {
                 Nickname = registerModel.Nickname,
@@ -101,7 +102,6 @@ namespace MOJA_ZGRADA.Controllers
                         UserName = User_Name,
                         Apartment_Number = i,
                         Building_Id = Building_Id
-                        //Address = registerModel.Address
                     };
 
                     //new tenant
@@ -116,10 +116,9 @@ namespace MOJA_ZGRADA.Controllers
                 var handles = new Handles
                 {
                     Building_Id = building.Id,
-                    Admin_Id = registerModel.Admin_Id,
-                    //Admin = GetAdmin(registerModel.Admin_Id),
-                    //Building = building
+                    Admin_Id = registerModel.Admin_Id
                 };
+
                 _context.Handleses.Add(handles);
                 await _context.SaveChangesAsync();
 
@@ -221,8 +220,7 @@ namespace MOJA_ZGRADA.Controllers
                 return NotFound(ex);
             }
         }
-
-
+        
         // PUT: api/Register/Tenant/Id
         [HttpPut("{id}")]
         [Route("Tenant/{id}")]

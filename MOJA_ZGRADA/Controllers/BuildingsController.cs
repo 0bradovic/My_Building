@@ -165,6 +165,30 @@ namespace MOJA_ZGRADA.Controllers
                 
         }
 
+        // POST: api/Buildings/Unassign/Building_Id
+        [HttpPost("{buildingId}")]
+        [Route("Unassign/{buildingId}")]
+        public async Task<IActionResult> UnassignBuilding([FromRoute] int buildingId, [FromBody] int adminId) //Unassign admin for building handling
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var handle = await _context.Handleses.Where(i => (i.Admin_Id == adminId && i.Building_Id == buildingId)).FirstOrDefaultAsync();
+
+            if (handle == null)
+            {
+                return NotFound();
+            }
+
+            _context.Handleses.Remove(handle);
+            await _context.SaveChangesAsync();
+
+            return Ok(handle);
+
+        }
+
         // GET: api/Buildings/Unassigned
         [HttpGet]
         [Authorize(Roles = "SuperAdmin, Admin")]
@@ -182,8 +206,7 @@ namespace MOJA_ZGRADA.Controllers
         {
             return _context.Buildings.Any(e => e.Id == id);
         }
-
-
+        
         //Only for incode calling
         public Building BuildingById(int id)
         {

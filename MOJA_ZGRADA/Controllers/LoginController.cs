@@ -24,9 +24,7 @@ namespace MOJA_ZGRADA.Controllers
         private RoleManager<Account> _roleManager;
         private readonly MyDbContext _context;
         private UserManager<Account> _userManager;
-
-        //Ne menjati redosled parametara, niti dodavati argumente u LoginController metodi
-
+        
         public LoginController(UserManager<Account> userManager)
         {
             _userManager = userManager;
@@ -35,7 +33,7 @@ namespace MOJA_ZGRADA.Controllers
         //POST: api/Login/Login
         [HttpPost]
         [Route("Login")]
-        public async Task<IActionResult> Login([FromBody] LoginModel model)     //Initial Login
+        public async Task<IActionResult> Login([FromBody] LoginModel model) //Initial Login
         {
             var user = await _userManager.FindByNameAsync(model.UserName);
             if (user != null && await _userManager.CheckPasswordAsync(user, model.Password))

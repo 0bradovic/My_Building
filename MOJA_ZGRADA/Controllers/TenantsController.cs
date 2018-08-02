@@ -72,8 +72,7 @@ namespace MOJA_ZGRADA.Controllers
             {
                 return BadRequest();
             }
-
-
+            
             PropertiesComparison.CompareAndForward(ten, tenantModel);
 
             _context.Entry(ten).State = EntityState.Modified;
@@ -81,6 +80,10 @@ namespace MOJA_ZGRADA.Controllers
             try
             {
                 await _context.SaveChangesAsync();
+
+                BuildingTenantNumber b = new BuildingTenantNumber(_context);
+
+                await b.CountAndUpdateAsync(tenantModel.Building_Id);
             }
             catch (DbUpdateConcurrencyException)
             {

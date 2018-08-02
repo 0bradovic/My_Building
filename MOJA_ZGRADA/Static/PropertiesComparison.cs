@@ -18,30 +18,7 @@ namespace MOJA_ZGRADA.Static
                 foreach (PropertyInfo property2 in Class2.GetType().GetProperties())
                 {
                     var x = property2.GetValue(Class2);
-                    //Type t = property2.PropertyType; 
-                    //if (t == typeof(double))
-                    //{
-                    //    if((double)x==0)
-                    //    {
-                    //        continue;
-                    //    }
-                    //}
-                    //if (t == typeof(int))
-                    //{
-                    //    if ((int)x == 0)
-                    //    {
-                    //        continue;
-                    //    }
-                    //}
-                    //if (t == typeof(float))
-                    //{
-                    //    if ((float)x == 0)
-                    //    {
-                    //        continue;
-                    //    }
-                    //}
-
-                    if (property1.Name == property2.Name/* && x != null*/)
+                    if (property1.Name == property2.Name)
                     { 
                         if (!property2.CanRead || (property2.GetIndexParameters().Length > 0))
                             continue;

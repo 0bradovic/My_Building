@@ -47,6 +47,7 @@ namespace MOJA_ZGRADA.Controllers
                 return BadRequest(ModelState);
             }
 
+            //PropertiesComparison.CompareAndForward(user, adminModel);
             var user = new Account
             {
                 First_Name = adminModel.First_Name,
