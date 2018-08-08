@@ -33,7 +33,7 @@ namespace MOJA_ZGRADA.Controllers
         [HttpPost]
         [Authorize(Roles = "Admin")]
         [Route("Initial")]
-        public async Task<IActionResult> Initial([FromBody] RegisterModel registerModel)  //Admin's initial registration of building + tenants (tbl_tenant, tbl_building, aspnetusers) *PROBLEM: NE VRACA NISTA U POSTMAN?!*
+        public async Task<IActionResult> Initial([FromBody] RegisterModel registerModel)  //Admin's initial registration of building + tenants (tbl_tenant, tbl_building, aspnetusers)
         {
             if (!ModelState.IsValid)
             {
@@ -265,11 +265,11 @@ namespace MOJA_ZGRADA.Controllers
 
         }
         
-        //POST: api/Register/NewBuilding
+        //POST: api/Register/Building/New
         [HttpPost]
         [Authorize(Roles = "Admin")]
         [Route("Building/New")]
-        public async Task<IActionResult> NewBuilding([FromBody] RegisterModel registerModel)    //For adding a new building *PROBLEM: NE VRACA NISTA U POSTMAN?!*
+        public async Task<IActionResult> NewBuilding([FromBody] RegisterModel registerModel)    //For adding a new building
         {
             if (!ModelState.IsValid)
             {
